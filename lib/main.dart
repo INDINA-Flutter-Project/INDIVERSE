@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MainApp());
-}
+import 'core/constants/app_theme.dart';
+import 'root.dart';
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+void main() => runApp(const IndiverseApp());
+
+class IndiverseApp extends StatelessWidget {
+  const IndiverseApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+    title: 'INDIVERSE',
+    debugShowCheckedModeBanner: false,
+    theme: AppTheme.dark,
+    home: const Root(),
+  );
 }
-
-// this is a test
-
-//
