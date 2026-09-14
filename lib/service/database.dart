@@ -2,20 +2,20 @@ import 'package:indina/models/game.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Database {
-  final supabase = Supabase.instance.client;
- 
+  Database({SupabaseClient? client})
+    : supabase = client ?? Supabase.instance.client;
+
+  static const _gamesTable = 'games_made_in_ksa';
+  final SupabaseClient supabase;
+
   Future<List<Game>> getAllGames() async {
-    final data = await supabase.from('games_made_in_ksa').select();
-    List<Game> allGames = [];
-    for (var e in data) {
-      allGames.add(Game.fromJson(e));
-    }
- 
-    return allGames;
+    final rows = await supabase.from(_gamesTable).select();
+
+    return rows.map(Game.fromJson).toList(growable: false);
   }
- 
-  addGame(Game model) async {
-    await supabase.from('games_made_in_ksa').insert({
+
+  Future<void> addGame(Game model) async {
+    await supabase.from(_gamesTable).insert({
       'name': model.name,
       'developer': model.developer,
       'publisher': model.publisher,
@@ -32,8 +32,8 @@ class Database {
       'awards': model.awards,
     });
   }
- 
-  removeGame(int id) async {
-    await supabase.from('games_made_in_ksa').delete().eq('id', id);
+
+  Future<void> removeGame(int id) async {
+    await supabase.from(_gamesTable).delete().eq('id', id);
   }
 }
