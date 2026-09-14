@@ -40,7 +40,11 @@ class _ExploreScreenState extends State<ExploreScreen> {
             children: [
               const Text(
                 'Explore',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
+                style: TextStyle(
+                  fontFamily: 'Michroma',
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
               const SizedBox(height: 16),
               TextField(

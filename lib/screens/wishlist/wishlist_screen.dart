@@ -25,7 +25,11 @@ class WishlistScreen extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(20, 24, 20, 18),
           child: Text(
             'Wishlist',
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              fontFamily: 'Michroma',
+              fontSize: 30,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
         Expanded(

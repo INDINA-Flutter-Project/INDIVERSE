@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:indina/screens/home/widgets/featured_game.dart';
 import 'package:indina/screens/home/widgets/header.dart';
@@ -34,6 +33,7 @@ class HomeScreen extends StatelessWidget {
               const Text(
                 'Discover Saudi\nindie games.',
                 style: TextStyle(
+                  fontFamily: 'Michroma',
                   fontSize: 34,
                   height: 1.08,
                   fontWeight: FontWeight.w800,
@@ -46,6 +46,7 @@ class HomeScreen extends StatelessWidget {
               const Text(
                 'Original worlds. Local talent. Your next favorite game.',
                 style: TextStyle(
+                  fontFamily: 'Tomorrow',
                   color: AppColors.textSecondary,
                   fontSize: 15,
                   height: 1.45,
@@ -68,17 +69,13 @@ class HomeScreen extends StatelessWidget {
                     child: Text(
                       'For you',
                       style: TextStyle(
+                        fontFamily: 'Michroma',
                         fontSize: 21,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
-                  Text(
-                    'See all',
-                    style: TextStyle(
-                      color: AppColors.primary,
-                    ),
-                  ),
+                  Text('See all', style: TextStyle(color: AppColors.primary)),
                 ],
               ),
 
@@ -107,7 +104,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-

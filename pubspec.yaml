@@ -17,3 +17,17 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/indiverse_wordmark.png
+    - assets/images/indiverse_icon.png
+    - assets/images/indiverse_mark.png
+  fonts:
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-Variable.ttf
+    - family: Tomorrow
+      fonts:
+        - asset: assets/fonts/Tomorrow-Regular.ttf
+    - family: Michroma
+      fonts:
+        - asset: assets/fonts/Michroma-Regular.ttf

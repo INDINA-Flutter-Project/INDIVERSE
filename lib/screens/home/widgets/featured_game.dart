@@ -8,6 +8,7 @@ import 'package:indina/screens/game_detail/widgets/game_artwork.dart';
 
 class FeaturedGame extends StatelessWidget {
   const FeaturedGame({
+    super.key,
     required this.game,
     required this.saved,
     required this.onWishlist,
@@ -51,10 +52,7 @@ class FeaturedGame extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Color(0xE6070C0B),
-                    ],
+                    colors: [Colors.transparent, Color(0xE6070C0B)],
                   ),
                 ),
               ),
@@ -73,6 +71,7 @@ class FeaturedGame extends StatelessWidget {
                           const Text(
                             'FEATURED',
                             style: TextStyle(
+                              fontFamily: 'Tomorrow',
                               color: AppColors.primary,
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
@@ -85,6 +84,7 @@ class FeaturedGame extends StatelessWidget {
                           Text(
                             game.title,
                             style: const TextStyle(
+                              fontFamily: 'Michroma',
                               fontSize: 25,
                               fontWeight: FontWeight.w800,
                             ),
@@ -93,6 +93,7 @@ class FeaturedGame extends StatelessWidget {
                           Text(
                             game.genres.join('  •  '),
                             style: const TextStyle(
+                              fontFamily: 'Tomorrow',
                               color: AppColors.textSecondary,
                               fontSize: 12,
                             ),

@@ -24,13 +24,18 @@ class EmptyState extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+            style: const TextStyle(
+              fontFamily: 'Michroma',
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             message,
             textAlign: TextAlign.center,
             style: const TextStyle(
+              fontFamily: 'Tomorrow',
               color: AppColors.textSecondary,
               height: 1.45,
             ),

@@ -61,6 +61,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 Text(
                   game.status.toUpperCase(),
                   style: const TextStyle(
+                    fontFamily: 'Tomorrow',
                     color: AppColors.primary,
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
@@ -71,6 +72,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 Text(
                   game.title,
                   style: const TextStyle(
+                    fontFamily: 'Michroma',
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
                   ),
@@ -78,7 +80,10 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 const SizedBox(height: 6),
                 Text(
                   'By ${game.studio}',
-                  style: const TextStyle(color: AppColors.textSecondary),
+                  style: const TextStyle(
+                    fontFamily: 'Tomorrow',
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 22),
                 Wrap(
@@ -92,17 +97,29 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 const SizedBox(height: 28),
                 const Text(
                   'About',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontFamily: 'Michroma',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   game.description,
-                  style: const TextStyle(fontSize: 16, height: 1.65),
+                  style: const TextStyle(
+                    fontFamily: 'Tomorrow',
+                    fontSize: 16,
+                    height: 1.65,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 const Text(
                   'Game activity',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontFamily: 'Michroma',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 14),
                 Container(
@@ -120,11 +137,21 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                         color: AppColors.primary,
                       ),
                     ),
-                    title: Text('Playable demo showcase'),
-                    subtitle: Text('18 September · Riyadh'),
+                    title: Text(
+                      'Playable demo showcase',
+                      style: TextStyle(fontFamily: 'Michroma'),
+                    ),
+                    subtitle: Text(
+                      '18 September · Riyadh',
+                      style: TextStyle(fontFamily: 'Tomorrow'),
+                    ),
                     trailing: Text(
                       'UPCOMING',
-                      style: TextStyle(color: AppColors.primary, fontSize: 9),
+                      style: TextStyle(
+                        fontFamily: 'Tomorrow',
+                        color: AppColors.primary,
+                        fontSize: 9,
+                      ),
                     ),
                   ),
                 ),
