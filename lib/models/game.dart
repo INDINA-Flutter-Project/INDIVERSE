@@ -49,11 +49,13 @@ class Game {
               .toList() ??
           const [],
       releaseDate: json['release_date'] as String?,
-      priceUsd: json['price_usd'] as String?,
+     priceUsd: json['price_usd']?.toString(),
       status: json['status'] as String?,
       shortDescription: json['short_description'] as String?,
       description: json['description'] as String?,
-      coverImage: json['cover_image'] as String? ?? '',
+      coverImage:
+          json['cover_image'] ??
+          'https://static.wikia.nocookie.net/there-is-no-game/images/f/f4/Game_2017.jpg/revision/latest?cb=20210317011945',
       arabicSupport: json['arabic_support'] as bool? ?? false,
       steamUrl: json['steam_url'] as String?,
       extraLinks: json['extra_links'] as String?,

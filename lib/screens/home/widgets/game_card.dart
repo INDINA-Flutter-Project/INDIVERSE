@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../models/game_preview.dart';
+import '../../../models/game.dart';
 import '../../game_detail/game_detail_screen.dart';
-import '../../game_detail/widgets/game_artwork.dart';
 
 class GameCard extends StatelessWidget {
   const GameCard({
@@ -11,7 +10,7 @@ class GameCard extends StatelessWidget {
     required this.saved,
     required this.onWishlist,
   });
-  final GamePreview game;
+  final Game game;
   final bool saved;
   final VoidCallback onWishlist;
 
@@ -34,14 +33,28 @@ class GameCard extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            GameArtwork(game: game, width: 94, height: 112, radius: 14),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: SizedBox(
+                width: 94,
+                height: 112,
+                child: game.coverImage != null
+                    ? Image.network(
+                        game.coverImage!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const ColoredBox(color: AppColors.background),
+                      )
+                    : const ColoredBox(color: AppColors.background),
+              ),
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    game.status.toUpperCase(),
+                    (game.status ?? 'Available').toUpperCase(),
                     style: const TextStyle(
                       fontFamily: 'Tomorrow',
                       color: AppColors.primary,
@@ -52,7 +65,7 @@ class GameCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    game.title,
+                    game.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -63,7 +76,7 @@ class GameCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    game.studio,
+                    game.developer ?? game.publisher ?? 'Independent studio',
                     style: const TextStyle(
                       fontFamily: 'Tomorrow',
                       color: AppColors.textSecondary,

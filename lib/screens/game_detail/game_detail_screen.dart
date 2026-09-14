@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../../models/game_preview.dart';
-import 'widgets/game_artwork.dart';
+import '../../models/game.dart';
 
 class GameDetailsScreen extends StatefulWidget {
   const GameDetailsScreen({
@@ -10,7 +9,7 @@ class GameDetailsScreen extends StatefulWidget {
     required this.initiallySaved,
     required this.onWishlist,
   });
-  final GamePreview game;
+  final Game game;
   final bool initiallySaved;
   final VoidCallback onWishlist;
 
@@ -46,12 +45,16 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
-              background: GameArtwork(
-                game: game,
-                width: double.infinity,
-                height: 380,
-                radius: 0,
-              ),
+              background: game.coverImage != null
+                  ? Image.network(
+                      game.coverImage!,
+                      width: double.infinity,
+                      height: 380,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const ColoredBox(color: AppColors.surface),
+                    )
+                  : const ColoredBox(color: AppColors.surface),
             ),
           ),
           SliverPadding(
@@ -59,7 +62,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             sliver: SliverList.list(
               children: [
                 Text(
-                  game.status.toUpperCase(),
+                  (game.status ?? 'Available').toUpperCase(),
                   style: const TextStyle(
                     fontFamily: 'Tomorrow',
                     color: AppColors.primary,
@@ -70,7 +73,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  game.title,
+                  game.name,
                   style: const TextStyle(
                     fontFamily: 'Michroma',
                     fontSize: 32,
@@ -79,7 +82,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'By ${game.studio}',
+                  'By ${game.developer ?? game.publisher ?? 'Independent studio'}',
                   style: const TextStyle(
                     fontFamily: 'Tomorrow',
                     color: AppColors.textSecondary,
@@ -89,10 +92,9 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: [
-                    ...game.genres,
-                    ...game.platforms,
-                  ].map((label) => Chip(label: Text(label))).toList(),
+                  children: game.genres
+                      .map((label) => Chip(label: Text(label)))
+                      .toList(),
                 ),
                 const SizedBox(height: 28),
                 const Text(
@@ -105,7 +107,9 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  game.description,
+                  game.description ??
+                      game.shortDescription ??
+                      'Details coming soon.',
                   style: const TextStyle(
                     fontFamily: 'Tomorrow',
                     fontSize: 16,
@@ -155,15 +159,17 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30),
-                FilledButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.open_in_new_rounded),
-                  label: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    child: Text('View on Steam'),
+                if (game.steamUrl != null) ...[
+                  const SizedBox(height: 30),
+                  FilledButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.open_in_new_rounded),
+                    label: const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      child: Text('View on Steam'),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
