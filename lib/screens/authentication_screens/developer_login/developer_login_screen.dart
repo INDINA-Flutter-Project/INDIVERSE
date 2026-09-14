@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Developer/developer_shell.dart';
 import '../widgets/auth_login_form.dart';
 
 class DeveloperLoginScreen extends StatelessWidget {
@@ -12,8 +13,9 @@ class DeveloperLoginScreen extends StatelessWidget {
         title: 'Developer login',
         subtitle: 'Manage your games, activities, and creator matches.',
         icon: Icons.code_rounded,
-        onLogin: () => ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Developer Home is the next UI flow.')),
+        onLogin: () => Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const DeveloperShell()),
         ),
       ),
     );
