@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:indina/core/constants/app_colors.dart';
 
 class Header extends StatelessWidget {
-  const Header();
+  const Header({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +15,7 @@ class Header extends StatelessWidget {
             color: AppColors.primary,
             borderRadius: BorderRadius.circular(13),
           ),
-          child: const Icon(
-            Icons.gamepad_rounded,
-            color: Color(0xFF092117),
-          ),
+          child: const Icon(Icons.gamepad_rounded, color: Color(0xFF092117)),
         ),
 
         const SizedBox(width: 11),
@@ -27,6 +24,7 @@ class Header extends StatelessWidget {
           child: Text(
             'INDIVERSE',
             style: TextStyle(
+              fontFamily: 'Michroma',
               fontSize: 16,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.4,
@@ -36,9 +34,7 @@ class Header extends StatelessWidget {
 
         IconButton(
           onPressed: () {},
-          icon: const Icon(
-            Icons.notifications_none_rounded,
-          ),
+          icon: const Icon(Icons.notifications_none_rounded),
         ),
       ],
     );

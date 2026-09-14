@@ -4,7 +4,7 @@ import '../../../models/game_preview.dart';
 import '../../game_detail/game_detail_screen.dart';
 import '../../game_detail/widgets/game_artwork.dart';
 
- class GameCard extends StatelessWidget {
+class GameCard extends StatelessWidget {
   const GameCard({
     super.key,
     required this.game,
@@ -43,6 +43,7 @@ import '../../game_detail/widgets/game_artwork.dart';
                   Text(
                     game.status.toUpperCase(),
                     style: const TextStyle(
+                      fontFamily: 'Tomorrow',
                       color: AppColors.primary,
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
@@ -55,6 +56,7 @@ import '../../game_detail/widgets/game_artwork.dart';
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
+                      fontFamily: 'Michroma',
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                     ),
@@ -63,6 +65,7 @@ import '../../game_detail/widgets/game_artwork.dart';
                   Text(
                     game.studio,
                     style: const TextStyle(
+                      fontFamily: 'Tomorrow',
                       color: AppColors.textSecondary,
                       fontSize: 12,
                     ),
@@ -71,6 +74,7 @@ import '../../game_detail/widgets/game_artwork.dart';
                   Text(
                     game.genres.take(2).join('  •  '),
                     style: const TextStyle(
+                      fontFamily: 'Tomorrow',
                       color: AppColors.textSecondary,
                       fontSize: 11,
                     ),

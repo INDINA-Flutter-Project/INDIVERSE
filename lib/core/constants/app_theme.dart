@@ -14,6 +14,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      fontFamily: 'Sora',
       colorScheme: colorScheme,
       scaffoldBackgroundColor: AppColors.background,
       navigationBarTheme: NavigationBarThemeData(
@@ -38,6 +39,9 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
+      ),
+      chipTheme: const ChipThemeData(
+        labelStyle: TextStyle(fontFamily: 'Tomorrow'),
       ),
     );
   }
