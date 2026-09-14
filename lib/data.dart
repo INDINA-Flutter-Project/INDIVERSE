@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'core/models/game_preview.dart';
+import 'models/game_preview.dart';
 
 /// Clearly fictional fixtures used while the frontend is backend-independent.
 const sampleGames = <GamePreview>[

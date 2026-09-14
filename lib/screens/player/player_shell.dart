@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/models/game_preview.dart';
+import '../../models/game_preview.dart';
 import '../explore/explore_screen.dart';
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
@@ -16,7 +16,7 @@ class PlayerShell extends StatefulWidget {
 
 class _PlayerShellState extends State<PlayerShell> {
   int selectedIndex = 0;
-  final wishlist = <String>{};
+   Set <String> wishlist = {};
 
   void toggleWishlist(GamePreview game) => setState(() {
     wishlist.contains(game.title)

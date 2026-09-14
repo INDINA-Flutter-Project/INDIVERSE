@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/game_preview.dart';
+import '../../../models/game_preview.dart';
 
 class GameArtwork extends StatelessWidget {
   const GameArtwork({

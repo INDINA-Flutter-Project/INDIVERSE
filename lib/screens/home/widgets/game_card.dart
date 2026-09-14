@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/models/game_preview.dart';
+import '../../../models/game_preview.dart';
 import '../../game_detail/game_detail_screen.dart';
 import '../../game_detail/widgets/game_artwork.dart';
 
-class GameCard extends StatelessWidget {
+ class GameCard extends StatelessWidget {
   const GameCard({
     super.key,
     required this.game,

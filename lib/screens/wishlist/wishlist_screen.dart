@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/models/game_preview.dart';
+import '../../models/game_preview.dart';
 import '../../core/widget/empty_state.dart';
 import '../../data.dart';
 import '../home/widgets/game_card.dart';

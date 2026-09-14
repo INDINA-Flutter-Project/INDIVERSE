@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/models/game_preview.dart';
+import '../../models/game_preview.dart';
 import 'widgets/game_artwork.dart';
 
 class GameDetailsScreen extends StatefulWidget {

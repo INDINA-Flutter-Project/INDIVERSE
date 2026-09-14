@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:indina/screens/authentication_screens/login_selection_screen.dart';
 
 import 'core/constants/app_theme.dart';
-import 'root.dart';
+
 
 void main() => runApp(const IndiverseApp());
 
@@ -13,6 +14,6 @@ class IndiverseApp extends StatelessWidget {
     title: 'INDIVERSE',
     debugShowCheckedModeBanner: false,
     theme: AppTheme.dark,
-    home: const Root(),
+    home: const LoginSelectionScreen(),
   );
 }
