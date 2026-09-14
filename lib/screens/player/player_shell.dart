@@ -16,7 +16,7 @@ class PlayerShell extends StatefulWidget {
 
 class _PlayerShellState extends State<PlayerShell> {
   int selectedIndex = 0;
-   Set <String> wishlist = {};
+  Set<String> wishlist = {};
 
   void toggleWishlist(GamePreview game) => setState(() {
     wishlist.contains(game.title)
