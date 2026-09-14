@@ -1,10 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:indina/core/constants/app_colors.dart';
-import 'package:indina/models/game_preview.dart';
+import 'package:indina/models/game.dart';
 import 'package:indina/screens/game_detail/game_detail_screen.dart';
-import 'package:indina/screens/game_detail/widgets/game_artwork.dart';
 
 class FeaturedGame extends StatelessWidget {
   const FeaturedGame({
@@ -14,7 +11,7 @@ class FeaturedGame extends StatelessWidget {
     required this.onWishlist,
   });
 
-  final GamePreview game;
+  final Game game;
   final bool saved;
   final VoidCallback onWishlist;
 
@@ -40,12 +37,15 @@ class FeaturedGame extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              GameArtwork(
-                game: game,
-                width: double.infinity,
-                height: 310,
-                radius: 0,
-              ),
+              if (game.coverImage != null)
+                Image.network(
+                  game.coverImage!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const ColoredBox(color: AppColors.surface),
+                )
+              else
+                const ColoredBox(color: AppColors.surface),
 
               const DecoratedBox(
                 decoration: BoxDecoration(
@@ -82,7 +82,7 @@ class FeaturedGame extends StatelessWidget {
                           const SizedBox(height: 6),
 
                           Text(
-                            game.title,
+                            game.name,
                             style: const TextStyle(
                               fontFamily: 'Michroma',
                               fontSize: 25,

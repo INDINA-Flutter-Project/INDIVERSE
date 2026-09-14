@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants/app_theme.dart';
 
 void main() async{
+
    WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(

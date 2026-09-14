@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../models/game_preview.dart';
+import '../../models/game.dart';
 import '../../core/widget/empty_state.dart';
-import '../../data.dart';
 import '../home/widgets/game_card.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({
     super.key,
+    required this.games,
     required this.wishlist,
     required this.onWishlist,
   });
-  final Set<String> wishlist;
-  final ValueChanged<GamePreview> onWishlist;
+  final List<Game> games;
+  final Set<int> wishlist;
+  final ValueChanged<Game> onWishlist;
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
@@ -22,11 +23,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final games = sampleGames.where((game) {
+    final games = widget.games.where((game) {
       final q = query.toLowerCase();
       final matches =
-          game.title.toLowerCase().contains(q) ||
-          game.studio.toLowerCase().contains(q) ||
+          game.name.toLowerCase().contains(q) ||
+          (game.developer ?? game.publisher ?? '').toLowerCase().contains(
+            q,
+          ) ||
           game.genres.any((value) => value.toLowerCase().contains(q));
       return matches && (genre == 'All' || game.genres.contains(genre));
     }).toList();
@@ -88,7 +91,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (_, index) => GameCard(
                     game: games[index],
-                    saved: widget.wishlist.contains(games[index].title),
+                    saved: widget.wishlist.contains(games[index].id),
                     onWishlist: () => widget.onWishlist(games[index]),
                   ),
                 ),

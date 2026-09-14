@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import '../../models/game_preview.dart';
+import '../../models/game.dart';
 import '../../core/widget/empty_state.dart';
-import '../../data.dart';
 import '../home/widgets/game_card.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({
     super.key,
+    required this.games,
     required this.wishlist,
     required this.onWishlist,
   });
-  final Set<String> wishlist;
-  final ValueChanged<GamePreview> onWishlist;
+  final List<Game> games;
+  final Set<int> wishlist;
+  final ValueChanged<Game> onWishlist;
 
   @override
   Widget build(BuildContext context) {
-    final games = sampleGames
-        .where((game) => wishlist.contains(game.title))
+    final savedGames = games
+        .where((game) => wishlist.contains(game.id))
         .toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +34,7 @@ class WishlistScreen extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: games.isEmpty
+          child: savedGames.isEmpty
               ? const EmptyState(
                   icon: Icons.favorite_border_rounded,
                   title: 'Your wishlist is empty',
@@ -42,12 +43,12 @@ class WishlistScreen extends StatelessWidget {
                 )
               : ListView.separated(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: games.length,
+                  itemCount: savedGames.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (_, index) => GameCard(
-                    game: games[index],
+                    game: savedGames[index],
                     saved: true,
-                    onWishlist: () => onWishlist(games[index]),
+                    onWishlist: () => onWishlist(savedGames[index]),
                   ),
                 ),
         ),
