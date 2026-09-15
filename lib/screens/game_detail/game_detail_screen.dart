@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/game.dart';
+import '../../service/playtest_interest_service.dart';
 import '../../service/url_launcher_service.dart';
 
 class GameDetailsScreen extends StatefulWidget {
@@ -18,8 +20,98 @@ class GameDetailsScreen extends StatefulWidget {
   State<GameDetailsScreen> createState() => _GameDetailsScreenState();
 }
 
+enum _InterestState { loading, error, notInterested, interested }
+
 class _GameDetailsScreenState extends State<GameDetailsScreen> {
   late bool saved = widget.initiallySaved;
+  _InterestState _interestState = _InterestState.loading;
+  bool _playtestBusy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInterestState();
+  }
+
+  Future<void> _loadInterestState() async {
+    final isUpcoming = widget.game.status?.trim().toLowerCase() == 'upcoming';
+
+    debugPrint('PLAYTEST DEBUG gameId=${widget.game.id}');
+    debugPrint('PLAYTEST DEBUG gameName=${widget.game.name}');
+    debugPrint('PLAYTEST DEBUG status=${widget.game.status}');
+    debugPrint(
+      'PLAYTEST DEBUG user=${Supabase.instance.client.auth.currentUser?.id}',
+    );
+    debugPrint(
+      'PLAYTEST DEBUG role=${Supabase.instance.client.auth.currentUser?.userMetadata?['role']}',
+    );
+    debugPrint('PLAYTEST DEBUG visibilityCondition=$isUpcoming');
+
+    if (!isUpcoming) return;
+
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+      if (!mounted) return;
+      setState(() => _interestState = _InterestState.error);
+      return;
+    }
+
+    if (mounted) setState(() => _interestState = _InterestState.loading);
+    try {
+      final interested = await PlaytestInterestService().hasInterest(
+        gameId: widget.game.id,
+        playerId: userId,
+      );
+      if (!mounted) return;
+      setState(
+        () => _interestState = interested
+            ? _InterestState.interested
+            : _InterestState.notInterested,
+      );
+    } catch (e, st) {
+      debugPrint('hasInterest failed: $e\n$st');
+      if (e is PostgrestException) {
+        debugPrint(
+          'PLAYTEST DEBUG postgrest message=${e.message} code=${e.code} '
+          'details=${e.details} hint=${e.hint}',
+        );
+      }
+      if (!mounted) return;
+      setState(() => _interestState = _InterestState.error);
+    }
+  }
+
+  Future<void> _toggleInterest() async {
+    if (_playtestBusy) return;
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    setState(() => _playtestBusy = true);
+    try {
+      if (_interestState == _InterestState.interested) {
+        await PlaytestInterestService().removeInterest(
+          gameId: widget.game.id,
+          playerId: userId,
+        );
+        if (!mounted) return;
+        setState(() => _interestState = _InterestState.notInterested);
+      } else {
+        await PlaytestInterestService().registerInterest(
+          gameId: widget.game.id,
+        );
+        if (!mounted) return;
+        setState(() => _interestState = _InterestState.interested);
+      }
+    } catch (e, st) {
+      debugPrint('playtest interest toggle failed: $e\n$st');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Something went wrong. Please try again.')),
+      );
+    } finally {
+      if (mounted) setState(() => _playtestBusy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +120,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
     final websiteUrl = game.extraLinks?.trim();
     final hasSteam = steamUrl != null && steamUrl.isNotEmpty;
     final hasWebsite = websiteUrl != null && websiteUrl.isNotEmpty;
+    final isUpcoming = game.status?.trim().toLowerCase() == 'upcoming';
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -197,11 +290,68 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     ],
                   ),
                 ],
+                if (isUpcoming) ...[
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: switch (_interestState) {
+                      _InterestState.loading => FilledButton.icon(
+                          onPressed: null,
+                          icon: const _Spinner(),
+                          label: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            child: Text('Checking interest…'),
+                          ),
+                        ),
+                      _InterestState.error => OutlinedButton.icon(
+                          onPressed: _loadInterestState,
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            child: Text('Could not check interest — Tap to retry'),
+                          ),
+                        ),
+                      _InterestState.notInterested => FilledButton.icon(
+                          onPressed: _playtestBusy ? null : _toggleInterest,
+                          icon: _playtestBusy
+                              ? const _Spinner()
+                              : const Icon(Icons.emoji_people_outlined),
+                          label: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            child: Text("I'm Interested in Playtesting"),
+                          ),
+                        ),
+                      _InterestState.interested => OutlinedButton.icon(
+                          onPressed: _playtestBusy ? null : _toggleInterest,
+                          icon: _playtestBusy
+                              ? const _Spinner()
+                              : const Icon(Icons.check_circle_outline_rounded),
+                          label: const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            child: Text('Interested ✓'),
+                          ),
+                        ),
+                    },
+                  ),
+                ],
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _Spinner extends StatelessWidget {
+  const _Spinner();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: 16,
+      width: 16,
+      child: CircularProgressIndicator(strokeWidth: 2),
     );
   }
 }

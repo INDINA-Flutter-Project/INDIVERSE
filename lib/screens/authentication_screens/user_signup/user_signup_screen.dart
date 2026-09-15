@@ -5,14 +5,28 @@ import '../../../service/auth_service.dart';
 import '../../player/player_shell.dart';
 import '../widgets/auth_signup_form.dart';
 
-class UserSignupScreen extends StatelessWidget {
+class UserSignupScreen extends StatefulWidget {
   const UserSignupScreen({super.key});
 
-  Future<String?> _signup(
-    BuildContext context,
-    String email,
-    String password,
-  ) async {
+  @override
+  State<UserSignupScreen> createState() => _UserSignupScreenState();
+}
+
+class _UserSignupScreenState extends State<UserSignupScreen> {
+  final _displayNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    _displayNameController.dispose();
+    super.dispose();
+  }
+
+  Future<String?> _signup(String email, String password) async {
+    final displayName = _displayNameController.text.trim();
+    if (displayName.isEmpty) {
+      return 'Enter your display name.';
+    }
+
     final authService = AuthService();
     final AuthResponse response;
     try {
@@ -20,6 +34,7 @@ class UserSignupScreen extends StatelessWidget {
         email: email,
         password: password,
         role: 'user',
+        displayName: displayName,
       );
     } on AuthException catch (e) {
       return e.message;
@@ -28,7 +43,7 @@ class UserSignupScreen extends StatelessWidget {
       return 'Something went wrong: $e';
     }
 
-    if (!context.mounted) return null;
+    if (!mounted) return null;
 
     if (response.session == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,7 +70,10 @@ class UserSignupScreen extends StatelessWidget {
         title: 'Create a user account',
         subtitle: 'Discover and wishlist Saudi indie games.',
         icon: Icons.sports_esports_rounded,
-        onSignup: (email, password) => _signup(context, email, password),
+        extraFieldController: _displayNameController,
+        extraFieldLabel: 'Display Name',
+        extraFieldHint: 'e.g. Ahmed',
+        onSignup: _signup,
         onHaveAccount: () => Navigator.of(context).pop(),
       ),
     );

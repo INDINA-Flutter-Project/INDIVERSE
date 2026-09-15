@@ -18,104 +18,115 @@ class DeveloperGameDetailScreen extends StatefulWidget {
 
 class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
   int selectedTab = 0;
+  late Game _game = widget.game;
+  bool _wasEdited = false;
 
   @override
   Widget build(BuildContext context) {
-    final game = widget.game;
+    final game = _game;
     final pages = [
       _AboutTab(game: game, onEditGame: _openEditGame),
       _EventsTab(game: game, onAddEvent: _openAddEvent),
       const _LinksTab(),
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(game.name),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert_rounded),
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-        children: [
-          (game.coverImage == null || game.coverImage!.isEmpty)
-              ? const _FallbackHeader()
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: Image.network(
-                    game.coverImage!,
-                    height: 190,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const _FallbackHeader(),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        Navigator.pop(context, _wasEdited);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(game.name),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.more_vert_rounded),
+            ),
+          ],
+        ),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          children: [
+            (game.coverImage == null || game.coverImage!.isEmpty)
+                ? const _FallbackHeader()
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Image.network(
+                      game.coverImage!,
+                      height: 190,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const _FallbackHeader(),
+                    ),
                   ),
-                ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              Expanded(child: Text(game.name, style: AppTextStyles.pageTitle)),
-              Chip(
-                label: Text(game.displayStatus),
-                backgroundColor: AppColors.primary,
-                labelStyle: AppTextStyles.label.copyWith(color: Colors.black),
-              ),
-            ],
-          ),
-          Text(
-            'by ${game.developer ?? 'Unknown developer'}',
-            style: AppTextStyles.bodyMuted,
-          ),
-          const SizedBox(height: 12),
-          if (game.genres.isNotEmpty)
-            Wrap(
-              spacing: 8,
+            const SizedBox(height: 18),
+            Row(
               children: [
-                for (final genre in game.genres) Chip(label: Text(genre)),
+                Expanded(
+                  child: Text(game.name, style: AppTextStyles.pageTitle),
+                ),
+                Chip(
+                  label: Text(game.displayStatus),
+                  backgroundColor: AppColors.primary,
+                  labelStyle: AppTextStyles.label.copyWith(color: Colors.black),
+                ),
               ],
             ),
-          const SizedBox(height: 12),
-          Text(
-            game.description ?? 'No description provided.',
-            style: AppTextStyles.body,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.open_in_new_rounded),
-                  label: const Text('Play on Steam'),
-                ),
+            Text(
+              'by ${game.developer ?? 'Unknown developer'}',
+              style: AppTextStyles.bodyMuted,
+            ),
+            const SizedBox(height: 12),
+            if (game.genres.isNotEmpty)
+              Wrap(
+                spacing: 8,
+                children: [
+                  for (final genre in game.genres) Chip(label: Text(genre)),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _openEditGame,
-                  icon: const Icon(Icons.edit_outlined),
-                  label: const Text('Edit Game'),
+            const SizedBox(height: 12),
+            Text(
+              game.description ?? 'No description provided.',
+              style: AppTextStyles.body,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.open_in_new_rounded),
+                    label: const Text('Play on Steam'),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          SegmentedButton<int>(
-            segments: const [
-              ButtonSegment(value: 0, label: Text('About')),
-              ButtonSegment(value: 1, label: Text('Events')),
-              ButtonSegment(value: 2, label: Text('Links')),
-            ],
-            selected: {selectedTab},
-            onSelectionChanged: (value) =>
-                setState(() => selectedTab = value.first),
-          ),
-          const SizedBox(height: 18),
-          pages[selectedTab],
-        ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _openEditGame,
+                    icon: const Icon(Icons.edit_outlined),
+                    label: const Text('Edit Game'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            SegmentedButton<int>(
+              segments: const [
+                ButtonSegment(value: 0, label: Text('About')),
+                ButtonSegment(value: 1, label: Text('Events')),
+                ButtonSegment(value: 2, label: Text('Links')),
+              ],
+              selected: {selectedTab},
+              onSelectionChanged: (value) =>
+                  setState(() => selectedTab = value.first),
+            ),
+            const SizedBox(height: 18),
+            pages[selectedTab],
+          ],
+        ),
       ),
     );
   }
@@ -128,11 +139,16 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
   }
 
   Future<void> _openEditGame() async {
-    final changed = await Navigator.push<bool>(
+    final updatedGame = await Navigator.push<Game>(
       context,
-      MaterialPageRoute(builder: (_) => const AddGameScreen()),
+      MaterialPageRoute(builder: (_) => AddGameScreen(existingGame: _game)),
     );
-    if (changed == true && mounted) Navigator.pop(context, true);
+    if (updatedGame != null && mounted) {
+      setState(() {
+        _game = updatedGame;
+        _wasEdited = true;
+      });
+    }
   }
 }
 

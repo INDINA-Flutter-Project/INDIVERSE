@@ -11,6 +11,7 @@ class AuthService {
     required String password,
     required String role,
     String? developerName,
+    String? displayName,
   }) {
     return supabase.auth.signUp(
       email: email,
@@ -18,6 +19,7 @@ class AuthService {
       data: {
         'role': role,
         if (developerName != null) 'developer_name': developerName,
+        if (displayName != null) 'display_name': displayName,
       },
     );
   }

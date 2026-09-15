@@ -44,6 +44,38 @@ class Database {
     });
   }
 
+  Future<void> updateGame(Game model) async {
+    final rows = await supabase
+        .from(_gamesTable)
+        .update({
+          'name': model.name,
+          'description': model.description,
+          'developer': model.developer,
+          'genres': model.genres,
+          'arabic_support': model.arabicSupport,
+          'awards': model.awards,
+          if (model.publisher != null) 'publisher': model.publisher,
+          if (model.releaseDate != null) 'release_date': model.releaseDate,
+          if (model.priceUsd != null) 'price_usd': model.priceUsd,
+          if (model.status != null) 'status': model.status,
+          if (model.shortDescription != null)
+            'short_description': model.shortDescription,
+          if (model.coverImage != null) 'cover_image': model.coverImage,
+          if (model.steamUrl != null) 'steam_url': model.steamUrl,
+          if (model.extraLinks != null) 'extra_links': model.extraLinks,
+          if (model.developerId != null) 'developer_id': model.developerId,
+        })
+        .eq('id', model.id)
+        .select();
+
+    if (rows.isEmpty) {
+      throw Exception(
+        'No game was updated — this usually means Supabase Row Level '
+        'Security has no UPDATE policy allowing this on "games_made_in_ksa".',
+      );
+    }
+  }
+
   Future<void> removeGame(int id) async {
     await supabase.from(_gamesTable).delete().eq('id', id);
   }

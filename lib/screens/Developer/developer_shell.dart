@@ -7,7 +7,7 @@ import '../../service/database.dart';
 import 'developer_home_screen.dart';
 import 'developer_profile_screen.dart';
 import 'developer_creators_screen.dart';
-import 'my_games_screen.dart';
+import 'playtesters_screen.dart';
 
 /// Owns developer-level navigation and the signed-in developer's real games.
 class DeveloperShell extends StatefulWidget {
@@ -65,7 +65,7 @@ class _DeveloperShellState extends State<DeveloperShell> {
             final games = snapshot.data ?? const <Game>[];
             final screens = [
               DeveloperHomeScreen(games: games, onGamesChanged: _reloadGames),
-              MyGamesScreen(games: games, onGamesChanged: _reloadGames),
+              const PlaytestersScreen(),
               const DeveloperCreatorsScreen(),
               const DeveloperProfileScreen(),
             ];
@@ -84,9 +84,9 @@ class _DeveloperShellState extends State<DeveloperShell> {
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Icons.sports_esports_outlined),
-            selectedIcon: Icon(Icons.sports_esports_rounded),
-            label: 'My Games',
+            icon: Icon(Icons.emoji_people_outlined),
+            selectedIcon: Icon(Icons.emoji_people_rounded),
+            label: 'Playtesters',
           ),
           NavigationDestination(
             icon: Icon(Icons.groups_outlined),
