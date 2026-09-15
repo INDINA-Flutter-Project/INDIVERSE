@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/game.dart';
+import '../../service/url_launcher_service.dart';
 
 class GameDetailsScreen extends StatefulWidget {
   const GameDetailsScreen({
@@ -23,6 +24,10 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final game = widget.game;
+    final steamUrl = game.steamUrl?.trim();
+    final websiteUrl = game.extraLinks?.trim();
+    final hasSteam = steamUrl != null && steamUrl.isNotEmpty;
+    final hasWebsite = websiteUrl != null && websiteUrl.isNotEmpty;
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -159,15 +164,37 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     ),
                   ),
                 ),
-                if (game.steamUrl != null) ...[
+                if (hasSteam || hasWebsite) ...[
                   const SizedBox(height: 30),
-                  FilledButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.open_in_new_rounded),
-                    label: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: Text('View on Steam'),
-                    ),
+                  Row(
+                    children: [
+                      if (hasSteam)
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: () =>
+                                UrlLauncherService.openExternalUrl(steamUrl),
+                            icon: const Icon(Icons.sports_esports_rounded),
+                            label: const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 15),
+                              child: Text('Steam'),
+                            ),
+                          ),
+                        ),
+                      if (hasSteam && hasWebsite) const SizedBox(width: 12),
+                      if (hasWebsite)
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: () => UrlLauncherService.openExternalUrl(
+                              websiteUrl,
+                            ),
+                            icon: const Icon(Icons.public_rounded),
+                            label: const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 15),
+                              child: Text('Website'),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ],
               ],
