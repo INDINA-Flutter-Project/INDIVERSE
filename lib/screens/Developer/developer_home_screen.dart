@@ -75,10 +75,7 @@ class DeveloperHomeScreen extends StatelessWidget {
             const Expanded(
               child: Text('Your Games', style: AppTextStyles.sectionTitle),
             ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('See All'),
-            ),
+            TextButton(onPressed: () {}, child: const Text('See All')),
           ],
         ),
         const SizedBox(height: 12),

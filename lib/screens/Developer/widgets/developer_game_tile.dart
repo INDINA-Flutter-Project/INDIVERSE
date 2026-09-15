@@ -49,7 +49,10 @@ class DeveloperGameTile extends StatelessWidget {
                       height: 72,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
-                          _FallbackThumbnail(accentColor: accentColor, icon: icon),
+                          _FallbackThumbnail(
+                            accentColor: accentColor,
+                            icon: icon,
+                          ),
                     ),
                   ),
             const SizedBox(width: 14),
@@ -83,7 +86,9 @@ class DeveloperGameTile extends StatelessWidget {
             IconButton(
               onPressed: onTap,
               icon: Icon(
-                showMenu ? Icons.more_vert_rounded : Icons.chevron_right_rounded,
+                showMenu
+                    ? Icons.more_vert_rounded
+                    : Icons.chevron_right_rounded,
               ),
             ),
           ],

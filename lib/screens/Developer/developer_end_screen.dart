@@ -32,7 +32,11 @@ class DeveloperEndScreen extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              const Icon(Icons.temple_hindu_rounded, color: Colors.white24, size: 120),
+              const Icon(
+                Icons.temple_hindu_rounded,
+                color: Colors.white24,
+                size: 120,
+              ),
               const SizedBox(height: 18),
               const Text('Saudi Games Hub', style: AppTextStyles.bodyMuted),
               const SizedBox(height: 12),

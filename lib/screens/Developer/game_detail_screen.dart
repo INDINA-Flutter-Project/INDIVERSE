@@ -12,7 +12,8 @@ class DeveloperGameDetailScreen extends StatefulWidget {
   final Game game;
 
   @override
-  State<DeveloperGameDetailScreen> createState() => _DeveloperGameDetailScreenState();
+  State<DeveloperGameDetailScreen> createState() =>
+      _DeveloperGameDetailScreenState();
 }
 
 class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
@@ -31,7 +32,10 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
       appBar: AppBar(
         title: Text(game.name),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert_rounded)),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_vert_rounded),
+          ),
         ],
       ),
       body: ListView(
@@ -53,9 +57,7 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
           const SizedBox(height: 18),
           Row(
             children: [
-              Expanded(
-                child: Text(game.name, style: AppTextStyles.pageTitle),
-              ),
+              Expanded(child: Text(game.name, style: AppTextStyles.pageTitle)),
               Chip(
                 label: Text(game.displayStatus),
                 backgroundColor: AppColors.primary,
@@ -63,7 +65,10 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
               ),
             ],
           ),
-          Text('by ${game.developer ?? 'Unknown developer'}', style: AppTextStyles.bodyMuted),
+          Text(
+            'by ${game.developer ?? 'Unknown developer'}',
+            style: AppTextStyles.bodyMuted,
+          ),
           const SizedBox(height: 12),
           if (game.genres.isNotEmpty)
             Wrap(
@@ -105,7 +110,8 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
               ButtonSegment(value: 2, label: Text('Links')),
             ],
             selected: {selectedTab},
-            onSelectionChanged: (value) => setState(() => selectedTab = value.first),
+            onSelectionChanged: (value) =>
+                setState(() => selectedTab = value.first),
           ),
           const SizedBox(height: 18),
           pages[selectedTab],
@@ -192,11 +198,19 @@ class _EventsTab extends StatelessWidget {
               Chip(
                 label: const Text('Playtest'),
                 backgroundColor: AppColors.primaryContainer,
-                labelStyle: AppTextStyles.label.copyWith(color: AppColors.primary),
+                labelStyle: AppTextStyles.label.copyWith(
+                  color: AppColors.primary,
+                ),
               ),
               const SizedBox(height: 8),
-              const Text('Sep 20, 2024 • 4:00 PM - 8:00 PM', style: AppTextStyles.bodyMuted),
-              const Text('Riyadh, Saudi Arabia', style: AppTextStyles.bodyMuted),
+              const Text(
+                'Sep 20, 2024 • 4:00 PM - 8:00 PM',
+                style: AppTextStyles.bodyMuted,
+              ),
+              const Text(
+                'Riyadh, Saudi Arabia',
+                style: AppTextStyles.bodyMuted,
+              ),
               const SizedBox(height: 10),
               const Text(
                 'Be one of the first to experience the game and share feedback.',
@@ -205,9 +219,19 @@ class _EventsTab extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: OutlinedButton(onPressed: onAddEvent, child: const Text('Edit'))),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: onAddEvent,
+                      child: const Text('Edit'),
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: FilledButton(onPressed: () {}, child: const Text('View'))),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () {},
+                      child: const Text('View'),
+                    ),
+                  ),
                 ],
               ),
             ],

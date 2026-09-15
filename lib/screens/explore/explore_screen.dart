@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../models/game.dart';
+import '../../core/constants/app_colors.dart';
 import '../../core/widget/empty_state.dart';
+import '../../core/widget/glass_action.dart';
+import '../../models/game.dart';
 import '../home/widgets/game_card.dart';
 
 class ExploreScreen extends StatefulWidget {
@@ -27,9 +29,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       final q = query.toLowerCase();
       final matches =
           game.name.toLowerCase().contains(q) ||
-          (game.developer ?? game.publisher ?? '').toLowerCase().contains(
-            q,
-          ) ||
+          (game.developer ?? game.publisher ?? '').toLowerCase().contains(q) ||
           game.genres.any((value) => value.toLowerCase().contains(q));
       return matches && (genre == 'All' || game.genres.contains(genre));
     }).toList();
@@ -65,11 +65,24 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       .map(
                         (item) => Padding(
                           padding: const EdgeInsets.only(right: 8),
-                          child: ChoiceChip(
-                            label: Text(item),
-                            selected: genre == item,
-                            onSelected: (_) => setState(() => genre = item),
-                          ),
+                          child: genre == item
+                              ? GlassAction(
+                                  onPressed: () => setState(() => genre = item),
+                                  label: item,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 9,
+                                  ),
+                                )
+                              : ChoiceChip(
+                                  label: Text(item),
+                                  selected: false,
+                                  labelStyle: const TextStyle(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  onSelected: (_) =>
+                                      setState(() => genre = item),
+                                ),
                         ),
                       )
                       .toList(),

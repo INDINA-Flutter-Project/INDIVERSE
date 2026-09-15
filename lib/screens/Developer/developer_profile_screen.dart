@@ -116,11 +116,7 @@ class _ProfileStat extends StatelessWidget {
 }
 
 class _ProfileAction extends StatelessWidget {
-  const _ProfileAction({
-    required this.icon,
-    required this.label,
-    this.onTap,
-  });
+  const _ProfileAction({required this.icon, required this.label, this.onTap});
 
   final IconData icon;
   final String label;

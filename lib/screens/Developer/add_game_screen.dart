@@ -38,7 +38,8 @@ class _AddGameScreenState extends State<AddGameScreen> {
     final developerId = Supabase.instance.client.auth.currentUser?.id;
     if (developerId == null) {
       setState(
-        () => _error = 'You must be signed in as a developer to publish a game.',
+        () =>
+            _error = 'You must be signed in as a developer to publish a game.',
       );
       return;
     }

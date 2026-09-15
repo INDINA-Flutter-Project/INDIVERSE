@@ -3,6 +3,7 @@ import 'package:indina/screens/home/widgets/featured_game.dart';
 import 'package:indina/screens/home/widgets/header.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/widget/glass_action.dart';
 import '../../models/game.dart';
 
 import 'widgets/game_card.dart';
@@ -61,9 +62,9 @@ class HomeScreen extends StatelessWidget {
             onWishlist: () => onWishlist(featuredGame),
           ),
           const SizedBox(height: 30),
-          const Row(
+          Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Text(
                   'For you',
                   style: TextStyle(
@@ -73,7 +74,14 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Text('See all', style: TextStyle(color: AppColors.primary)),
+              GlassAction(
+                onPressed: () {},
+                label: 'See all',
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 14),

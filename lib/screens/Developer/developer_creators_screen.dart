@@ -111,32 +111,32 @@ class _CreatorMatchCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-          CircleAvatar(
-            radius: 26,
-            backgroundColor: AppColors.primaryContainer,
-            child: Icon(icon, color: AppColors.primary),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: AppTextStyles.body.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(focus, style: AppTextStyles.bodyMuted),
-              ],
+            CircleAvatar(
+              radius: 26,
+              backgroundColor: AppColors.primaryContainer,
+              child: Icon(icon, color: AppColors.primary),
             ),
-          ),
-          Chip(
-            label: Text(matches),
-            backgroundColor: AppColors.primary,
-            labelStyle: AppTextStyles.label.copyWith(color: Colors.black),
-          ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: AppTextStyles.body.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(focus, style: AppTextStyles.bodyMuted),
+                ],
+              ),
+            ),
+            Chip(
+              label: Text(matches),
+              backgroundColor: AppColors.primary,
+              labelStyle: AppTextStyles.label.copyWith(color: Colors.black),
+            ),
           ],
         ),
       ),

@@ -28,22 +28,35 @@ class CreatorProfileScreen extends StatelessWidget {
                 CircleAvatar(
                   radius: 52,
                   backgroundColor: AppColors.primaryContainer,
-                  child: Icon(Icons.person_rounded, color: AppColors.primary, size: 50),
+                  child: Icon(
+                    Icons.person_rounded,
+                    color: AppColors.primary,
+                    size: 50,
+                  ),
                 ),
                 SizedBox(height: 12),
                 Text('BanderitaX', style: AppTextStyles.sectionTitle),
-                Text('Saudi Gaming Content Creator', style: AppTextStyles.bodyMuted),
+                Text(
+                  'Saudi Gaming Content Creator',
+                  style: AppTextStyles.bodyMuted,
+                ),
               ],
             ),
           ),
           const SizedBox(height: 18),
           Row(
             children: const [
-              Expanded(child: _CreatorStat(value: '10.2M', label: 'Subscribers')),
+              Expanded(
+                child: _CreatorStat(value: '10.2M', label: 'Subscribers'),
+              ),
               SizedBox(width: 10),
-              Expanded(child: _CreatorStat(value: '1.5M', label: 'Followers')),
+              Expanded(
+                child: _CreatorStat(value: '1.5M', label: 'Followers'),
+              ),
               SizedBox(width: 10),
-              Expanded(child: _CreatorStat(value: 'Horror', label: 'Main Focus')),
+              Expanded(
+                child: _CreatorStat(value: 'Horror', label: 'Main Focus'),
+              ),
             ],
           ),
           const SizedBox(height: 24),
@@ -97,7 +110,10 @@ class _CreatorStat extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(value, style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700)),
+          Text(
+            value,
+            style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 4),
           Text(
             label,
