@@ -14,22 +14,33 @@ class Database {
     return rows.map(Game.fromJson).toList(growable: false);
   }
 
+  Future<List<Game>> getGamesByDeveloper(String developerId) async {
+    final rows = await supabase
+        .from(_gamesTable)
+        .select()
+        .eq('developer_id', developerId);
+
+    return rows.map(Game.fromJson).toList(growable: false);
+  }
+
   Future<void> addGame(Game model) async {
     await supabase.from(_gamesTable).insert({
       'name': model.name,
       'developer': model.developer,
-      'publisher': model.publisher,
       'genres': model.genres,
-      'release_date': model.releaseDate,
-      'price_usd': model.priceUsd,
-      'status': model.status,
-      'short_description': model.shortDescription,
-      'description': model.description,
-      'cover_image': model.coverImage,
       'arabic_support': model.arabicSupport,
-      'steam_url': model.steamUrl,
-      'extra_links': model.extraLinks,
       'awards': model.awards,
+      if (model.publisher != null) 'publisher': model.publisher,
+      if (model.releaseDate != null) 'release_date': model.releaseDate,
+      if (model.priceUsd != null) 'price_usd': model.priceUsd,
+      if (model.status != null) 'status': model.status,
+      if (model.shortDescription != null)
+        'short_description': model.shortDescription,
+      if (model.description != null) 'description': model.description,
+      if (model.coverImage != null) 'cover_image': model.coverImage,
+      if (model.steamUrl != null) 'steam_url': model.steamUrl,
+      if (model.extraLinks != null) 'extra_links': model.extraLinks,
+      if (model.developerId != null) 'developer_id': model.developerId,
     });
   }
 

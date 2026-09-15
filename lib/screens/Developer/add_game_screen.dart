@@ -1,11 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/text_styles.dart';
-import 'game_detail_screen.dart';
+import '../../models/game.dart';
+import '../../service/auth_service.dart';
+import '../../service/database.dart';
 
-class AddGameScreen extends StatelessWidget {
+class AddGameScreen extends StatefulWidget {
   const AddGameScreen({super.key});
+
+  @override
+  State<AddGameScreen> createState() => _AddGameScreenState();
+}
+
+class _AddGameScreenState extends State<AddGameScreen> {
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  bool _submitting = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _publish() async {
+    final title = _titleController.text.trim();
+    final description = _descriptionController.text.trim();
+
+    if (title.isEmpty) {
+      setState(() => _error = 'Game title is required.');
+      return;
+    }
+
+    final developerId = Supabase.instance.client.auth.currentUser?.id;
+    if (developerId == null) {
+      setState(
+        () => _error = 'You must be signed in as a developer to publish a game.',
+      );
+      return;
+    }
+
+    final developerName = AuthService().currentDeveloperName;
+    if (developerName == null || developerName.isEmpty) {
+      setState(
+        () => _error =
+            'Your account is missing a developer name — please sign out and sign up again.',
+      );
+      return;
+    }
+
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+
+    try {
+      await Database().addGame(
+        Game(
+          id: 0,
+          name: title,
+          description: description.isEmpty ? null : description,
+          developer: developerName,
+          developerId: developerId,
+        ),
+      );
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (e, st) {
+      debugPrint('addGame failed: $e\n$st');
+      if (!mounted) return;
+      setState(() => _error = 'Could not publish game: $e');
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,46 +85,34 @@ class AddGameScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
         children: [
-          Container(
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.add_photo_alternate_outlined, color: AppColors.primary),
-                SizedBox(height: 8),
-                Text('Upload Cover Image', style: AppTextStyles.body),
-                Text('PNG, JPG (Max 5MB)', style: AppTextStyles.bodyMuted),
-              ],
-            ),
+          _DeveloperTextField(
+            label: 'Game Title',
+            hint: 'Enter game title',
+            controller: _titleController,
           ),
-          const SizedBox(height: 20),
-          const _DeveloperTextField(label: 'Game Title', hint: 'Enter game title'),
           const SizedBox(height: 14),
-          const _DeveloperTextField(
+          _DeveloperTextField(
             label: 'Description',
             hint: 'Tell us about your game...',
+            controller: _descriptionController,
             maxLines: 4,
           ),
-          const SizedBox(height: 14),
-          const _DeveloperDropdown(label: 'Genre', value: 'Select genre'),
-          const SizedBox(height: 14),
-          const _DeveloperDropdown(label: 'Platform', value: 'Select platform'),
-          const SizedBox(height: 14),
-          const _DeveloperDropdown(label: 'Status', value: 'Select status'),
+          if (_error != null) ...[
+            const SizedBox(height: 14),
+            Text(_error!, style: const TextStyle(color: AppColors.error)),
+          ],
           const SizedBox(height: 24),
           FilledButton(
-            onPressed: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const DeveloperGameDetailScreen()),
-            ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 15),
-              child: Text('Publish Game'),
+            onPressed: _submitting ? null : _publish,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: _submitting
+                  ? const SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Publish Game'),
             ),
           ),
         ],
@@ -66,38 +125,21 @@ class _DeveloperTextField extends StatelessWidget {
   const _DeveloperTextField({
     required this.label,
     required this.hint,
+    required this.controller,
     this.maxLines = 1,
   });
 
   final String label;
   final String hint;
+  final TextEditingController controller;
   final int maxLines;
 
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       maxLines: maxLines,
       decoration: InputDecoration(labelText: label, hintText: hint),
-    );
-  }
-}
-
-class _DeveloperDropdown extends StatelessWidget {
-  const _DeveloperDropdown({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return InputDecorator(
-      decoration: InputDecoration(labelText: label),
-      child: Row(
-        children: [
-          Expanded(child: Text(value, style: AppTextStyles.bodyMuted)),
-          const Icon(Icons.keyboard_arrow_down_rounded),
-        ],
-      ),
     );
   }
 }

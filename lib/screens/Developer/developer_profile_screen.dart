@@ -2,9 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
+import '../../service/auth_service.dart';
+import '../authentication_screens/login_selection_screen.dart';
 
 class DeveloperProfileScreen extends StatelessWidget {
   const DeveloperProfileScreen({super.key});
+
+  Future<void> _signOut(BuildContext context) async {
+    await AuthService().signOut();
+    if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginSelectionScreen()),
+      (_) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +75,11 @@ class DeveloperProfileScreen extends StatelessWidget {
           icon: Icons.favorite_border_rounded,
           label: 'Saved Creators',
         ),
-        _ProfileAction(icon: Icons.settings_outlined, label: 'Settings'),
+        _ProfileAction(
+          icon: Icons.logout_rounded,
+          label: 'Sign out',
+          onTap: () => _signOut(context),
+        ),
       ],
     );
   }
@@ -101,10 +116,15 @@ class _ProfileStat extends StatelessWidget {
 }
 
 class _ProfileAction extends StatelessWidget {
-  const _ProfileAction({required this.icon, required this.label});
+  const _ProfileAction({
+    required this.icon,
+    required this.label,
+    this.onTap,
+  });
 
   final IconData icon;
   final String label;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +133,7 @@ class _ProfileAction extends StatelessWidget {
       leading: Icon(icon, color: AppColors.textPrimary),
       title: Text(label, style: AppTextStyles.body),
       trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: () {},
+      onTap: onTap ?? () {},
     );
   }
 }

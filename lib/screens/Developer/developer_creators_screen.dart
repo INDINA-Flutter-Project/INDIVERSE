@@ -73,7 +73,7 @@ class _GameSelector extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Expanded(child: Text('The Last Sand', style: AppTextStyles.body)),
+            Expanded(child: Text('Select a game', style: AppTextStyles.body)),
             Icon(Icons.keyboard_arrow_down_rounded),
           ],
         ),

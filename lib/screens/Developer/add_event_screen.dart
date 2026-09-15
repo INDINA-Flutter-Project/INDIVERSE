@@ -21,7 +21,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         children: [
           const _EventField(label: 'Event Title', hint: 'Enter event title'),
           const SizedBox(height: 14),
-          const _EventDropdown(label: 'Related Game', value: 'The Last Sand'),
+          const _EventDropdown(label: 'Related Game', value: 'Select a game'),
           const SizedBox(height: 14),
           const Text('Type', style: AppTextStyles.body),
           const SizedBox(height: 8),

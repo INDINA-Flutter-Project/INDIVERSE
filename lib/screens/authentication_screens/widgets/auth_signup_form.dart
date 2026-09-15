@@ -2,29 +2,36 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/text_styles.dart';
 
-class AuthLoginForm extends StatefulWidget {
-  const AuthLoginForm({
+class AuthSignupForm extends StatefulWidget {
+  const AuthSignupForm({
     super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
-    required this.onLogin,
-    required this.onCreateAccount,
+    required this.onSignup,
+    required this.onHaveAccount,
+    this.extraFieldController,
+    this.extraFieldLabel,
+    this.extraFieldHint,
   });
 
   final String title;
   final String subtitle;
   final IconData icon;
-  final Future<String?> Function(String email, String password) onLogin;
-  final VoidCallback onCreateAccount;
+  final Future<String?> Function(String email, String password) onSignup;
+  final VoidCallback onHaveAccount;
+  final TextEditingController? extraFieldController;
+  final String? extraFieldLabel;
+  final String? extraFieldHint;
 
   @override
-  State<AuthLoginForm> createState() => _AuthLoginFormState();
+  State<AuthSignupForm> createState() => _AuthSignupFormState();
 }
 
-class _AuthLoginFormState extends State<AuthLoginForm> {
+class _AuthSignupFormState extends State<AuthSignupForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
   bool _submitting = false;
   String? _error;
 
@@ -32,19 +39,25 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
+    final confirm = _confirmController.text;
 
     if (email.isEmpty || !email.contains('@')) {
       setState(() => _error = 'Enter a valid email address.');
       return;
     }
-    if (password.isEmpty) {
-      setState(() => _error = 'Enter your password.');
+    if (password.length < 6) {
+      setState(() => _error = 'Password must be at least 6 characters.');
+      return;
+    }
+    if (password != confirm) {
+      setState(() => _error = 'Passwords do not match.');
       return;
     }
 
@@ -55,9 +68,9 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
 
     String? error;
     try {
-      error = await widget.onLogin(email, password);
+      error = await widget.onSignup(email, password);
     } catch (e, st) {
-      debugPrint('Login failed: $e\n$st');
+      debugPrint('Signup failed: $e\n$st');
       error = 'Something went wrong: $e';
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -91,6 +104,17 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
           style: AppTextStyles.bodyMuted,
         ),
         const SizedBox(height: 36),
+        if (widget.extraFieldController != null) ...[
+          TextField(
+            controller: widget.extraFieldController,
+            decoration: InputDecoration(
+              labelText: widget.extraFieldLabel,
+              hintText: widget.extraFieldHint,
+              prefixIcon: const Icon(Icons.badge_outlined),
+            ),
+          ),
+          const SizedBox(height: 14),
+        ],
         TextField(
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
@@ -108,6 +132,15 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
             prefixIcon: Icon(Icons.lock_outline_rounded),
           ),
         ),
+        const SizedBox(height: 14),
+        TextField(
+          controller: _confirmController,
+          obscureText: true,
+          decoration: const InputDecoration(
+            labelText: 'Confirm password',
+            prefixIcon: Icon(Icons.lock_outline_rounded),
+          ),
+        ),
         if (_error != null) ...[
           const SizedBox(height: 12),
           Text(
@@ -115,14 +148,7 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
             style: const TextStyle(color: AppColors.error),
           ),
         ],
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {},
-            child: const Text('Forgot password?'),
-          ),
-        ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 20),
         FilledButton(
           onPressed: _submitting ? null : _submit,
           child: Padding(
@@ -133,13 +159,13 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
                     width: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Log in'),
+                : const Text('Sign up'),
           ),
         ),
         const SizedBox(height: 16),
         TextButton(
-          onPressed: widget.onCreateAccount,
-          child: const Text('Create a new account'),
+          onPressed: widget.onHaveAccount,
+          child: const Text('Already have an account? Log in'),
         ),
       ],
     );

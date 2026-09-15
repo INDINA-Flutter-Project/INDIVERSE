@@ -11,6 +11,7 @@ class DeveloperGameTile extends StatelessWidget {
     required this.status,
     required this.accentColor,
     required this.icon,
+    this.imageUrl,
     this.showMenu = false,
     this.onTap,
   });
@@ -20,6 +21,7 @@ class DeveloperGameTile extends StatelessWidget {
   final String status;
   final Color accentColor;
   final IconData icon;
+  final String? imageUrl;
   final bool showMenu;
   final VoidCallback? onTap;
 
@@ -37,19 +39,19 @@ class DeveloperGameTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [accentColor, AppColors.surfaceRaised],
-                ),
-              ),
-              child: Icon(icon, color: Colors.white, size: 34),
-            ),
+            (imageUrl == null || imageUrl!.isEmpty)
+                ? _FallbackThumbnail(accentColor: accentColor, icon: icon)
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.network(
+                      imageUrl!,
+                      width: 72,
+                      height: 72,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _FallbackThumbnail(accentColor: accentColor, icon: icon),
+                    ),
+                  ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -87,6 +89,30 @@ class DeveloperGameTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FallbackThumbnail extends StatelessWidget {
+  const _FallbackThumbnail({required this.accentColor, required this.icon});
+
+  final Color accentColor;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 72,
+      height: 72,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [accentColor, AppColors.surfaceRaised],
+        ),
+      ),
+      child: Icon(icon, color: Colors.white, size: 34),
     );
   }
 }

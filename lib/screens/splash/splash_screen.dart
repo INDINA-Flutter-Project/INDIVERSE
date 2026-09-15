@@ -1,7 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../Developer/developer_shell.dart';
+import '../player/player_shell.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -31,9 +34,23 @@ class _SplashScreenState extends State<SplashScreen>
   void _continueToLogin() {
     if (!mounted || _continued) return;
     _continued = true;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-    );
+
+    final session = Supabase.instance.client.auth.currentSession;
+    final role =
+        Supabase.instance.client.auth.currentUser?.userMetadata?['role'];
+
+    final Widget destination;
+    if (session != null && role == 'developer') {
+      destination = const DeveloperShell();
+    } else if (session != null && role == 'user') {
+      destination = const PlayerShell();
+    } else {
+      destination = const OnboardingScreen();
+    }
+
+    Navigator.of(
+      context,
+    ).pushReplacement(MaterialPageRoute(builder: (_) => destination));
   }
 
   @override

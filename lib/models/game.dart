@@ -16,6 +16,7 @@ class Game {
   final List<String> awards;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final String? developerId;
 
   Game({
     required this.id,
@@ -35,6 +36,7 @@ class Game {
     this.awards = const [],
     this.createdAt,
     this.updatedAt,
+    this.developerId,
   });
 
   factory Game.fromJson(Map<String, dynamic> json) {
@@ -70,6 +72,13 @@ class Game {
       updatedAt: json['updated_at'] != null
           ? DateTime.tryParse(json['updated_at'] as String)
           : null,
+      developerId: json['developer_id'] as String?,
     );
   }
+
+  String get displayStatus => switch (status) {
+    'released' => 'Released',
+    'upcoming' => 'Upcoming',
+    _ => status ?? 'Unknown',
+  };
 }
