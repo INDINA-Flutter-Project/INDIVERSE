@@ -12,7 +12,6 @@ class DeveloperGameTile extends StatelessWidget {
     required this.accentColor,
     required this.icon,
     this.imageUrl,
-    this.showMenu = false,
     this.onTap,
   });
 
@@ -22,7 +21,6 @@ class DeveloperGameTile extends StatelessWidget {
   final Color accentColor;
   final IconData icon;
   final String? imageUrl;
-  final bool showMenu;
   final VoidCallback? onTap;
 
   @override
@@ -85,11 +83,7 @@ class DeveloperGameTile extends StatelessWidget {
             ),
             IconButton(
               onPressed: onTap,
-              icon: Icon(
-                showMenu
-                    ? Icons.more_vert_rounded
-                    : Icons.chevron_right_rounded,
-              ),
+              icon: const Icon(Icons.chevron_right_rounded),
             ),
           ],
         ),

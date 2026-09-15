@@ -19,20 +19,15 @@ class DeveloperProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final developerName =
+        AuthService().currentDeveloperName?.trim().isNotEmpty == true
+        ? AuthService().currentDeveloperName!.trim()
+        : 'Game Developer';
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
       children: [
-        Row(
-          children: [
-            const Expanded(
-              child: Text('My Profile', style: AppTextStyles.pageTitle),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.settings_outlined),
-            ),
-          ],
-        ),
+        const Text('My Profile', style: AppTextStyles.pageTitle),
         const SizedBox(height: 22),
         const CircleAvatar(
           radius: 48,
@@ -40,8 +35,8 @@ class DeveloperProfileScreen extends StatelessWidget {
           child: Icon(Icons.person_rounded, color: AppColors.primary, size: 44),
         ),
         const SizedBox(height: 14),
-        const Text(
-          'Faisal AlAnazi',
+        Text(
+          developerName,
           textAlign: TextAlign.center,
           style: AppTextStyles.sectionTitle,
         ),
@@ -69,12 +64,6 @@ class DeveloperProfileScreen extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         const _ProfileAction(icon: Icons.edit_outlined, label: 'Edit Profile'),
-        _ProfileAction(icon: Icons.sports_esports_outlined, label: 'My Games'),
-        _ProfileAction(icon: Icons.event_outlined, label: 'My Events'),
-        _ProfileAction(
-          icon: Icons.favorite_border_rounded,
-          label: 'Saved Creators',
-        ),
         _ProfileAction(
           icon: Icons.logout_rounded,
           label: 'Sign out',

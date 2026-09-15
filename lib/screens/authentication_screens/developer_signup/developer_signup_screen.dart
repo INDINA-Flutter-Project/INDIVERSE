@@ -48,7 +48,9 @@ class _DeveloperSignupScreenState extends State<DeveloperSignupScreen> {
     if (response.session == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Check your email to confirm your account, then log in.'),
+          content: Text(
+            'Check your email to confirm your account, then log in.',
+          ),
         ),
       );
       Navigator.of(context).pop();
@@ -65,7 +67,8 @@ class _DeveloperSignupScreenState extends State<DeveloperSignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: AuthSignupForm(
         title: 'Create a developer account',
         subtitle: 'Manage your games, activities, and creator matches.',

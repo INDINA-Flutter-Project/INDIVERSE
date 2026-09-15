@@ -40,7 +40,8 @@ class UserLoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: AuthLoginForm(
         title: 'User login',
         subtitle: 'Discover and wishlist Saudi indie games.',

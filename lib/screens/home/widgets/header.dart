@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:indina/core/constants/app_colors.dart';
-import 'package:indina/core/widget/glass_action.dart';
 
 class Header extends StatelessWidget {
   const Header({super.key});
@@ -30,15 +29,6 @@ class Header extends StatelessWidget {
               fontWeight: FontWeight.w900,
               letterSpacing: 1.4,
             ),
-          ),
-        ),
-
-        GlassAction(
-          onPressed: () {},
-          padding: const EdgeInsets.all(11),
-          child: const Icon(
-            Icons.notifications_none_rounded,
-            color: AppColors.textPrimary,
           ),
         ),
       ],

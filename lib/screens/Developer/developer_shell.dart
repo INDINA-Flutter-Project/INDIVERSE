@@ -63,10 +63,22 @@ class _DeveloperShellState extends State<DeveloperShell> {
             }
 
             final games = snapshot.data ?? const <Game>[];
+            final developerName =
+                Supabase
+                        .instance
+                        .client
+                        .auth
+                        .currentUser
+                        ?.userMetadata?['developer_name']
+                    as String?;
             final screens = [
-              DeveloperHomeScreen(games: games, onGamesChanged: _reloadGames),
+              DeveloperHomeScreen(
+                games: games,
+                onGamesChanged: _reloadGames,
+                developerName: developerName,
+              ),
               const PlaytestersScreen(),
-              const DeveloperCreatorsScreen(),
+              DeveloperCreatorsScreen(games: games),
               const DeveloperProfileScreen(),
             ];
 

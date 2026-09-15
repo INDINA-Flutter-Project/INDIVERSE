@@ -48,7 +48,9 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
     if (response.session == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Check your email to confirm your account, then log in.'),
+          content: Text(
+            'Check your email to confirm your account, then log in.',
+          ),
         ),
       );
       Navigator.of(context).pop();
@@ -65,7 +67,8 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: AuthSignupForm(
         title: 'Create a user account',
         subtitle: 'Discover and wishlist Saudi indie games.',

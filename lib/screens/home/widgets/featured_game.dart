@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:indina/core/constants/app_colors.dart';
-import 'package:indina/core/widget/glass_action.dart';
 import 'package:indina/models/game.dart';
 import 'package:indina/screens/game_detail/game_detail_screen.dart';
 
@@ -63,57 +62,41 @@ class FeaturedGame extends StatelessWidget {
                 right: 18,
                 bottom: 20,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'FEATURED',
-                            style: TextStyle(
-                              fontFamily: 'Tomorrow',
-                              color: AppColors.primary,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
-                            ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'FEATURED',
+                          style: TextStyle(
+                            fontFamily: 'Tomorrow',
+                            color: AppColors.primary,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1,
                           ),
+                        ),
 
-                          const SizedBox(height: 6),
+                        const SizedBox(height: 6),
 
-                          Text(
-                            game.name,
-                            style: const TextStyle(
-                              fontFamily: 'Michroma',
-                              fontSize: 25,
-                              fontWeight: FontWeight.w800,
-                            ),
+                        Text(
+                          game.name,
+                          style: const TextStyle(
+                            fontFamily: 'Michroma',
+                            fontSize: 25,
+                            fontWeight: FontWeight.w800,
                           ),
+                        ),
 
-                          Text(
-                            game.genres.join('  •  '),
-                            style: const TextStyle(
-                              fontFamily: 'Tomorrow',
-                              color: AppColors.textSecondary,
-                              fontSize: 12,
-                            ),
+                        Text(
+                          game.genres.join('  •  '),
+                          style: const TextStyle(
+                            fontFamily: 'Tomorrow',
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
                           ),
-                        ],
-                      ),
-                    ),
-
-                    GlassAction(
-                      onPressed: onWishlist,
-                      padding: const EdgeInsets.all(14),
-                      child: Icon(
-                        saved
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        color: saved
-                            ? AppColors.primary
-                            : AppColors.textPrimary,
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

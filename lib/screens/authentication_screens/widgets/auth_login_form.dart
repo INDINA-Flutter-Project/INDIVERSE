@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/text_styles.dart';
+import 'auth_background.dart';
 
 class AuthLoginForm extends StatefulWidget {
   const AuthLoginForm({
@@ -69,79 +70,102 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        const SizedBox(height: 32),
-        CircleAvatar(
-          radius: 32,
-          backgroundColor: AppColors.primaryContainer,
-          child: Icon(widget.icon, color: AppColors.primary, size: 30),
+    return AuthDecoratedBackground(
+      child: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(24, 76, 24, 24),
+          children: [
+            CircleAvatar(
+              radius: 48,
+              backgroundColor: AppColors.primaryContainer.withValues(
+                alpha: 0.72,
+              ),
+              child: Icon(widget.icon, color: AppColors.primary, size: 40),
+            ),
+            const SizedBox(height: 22),
+            const Text(
+              'INDIVERSE',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Michroma',
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              widget.title,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.pageTitle.copyWith(fontSize: 30),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              widget.subtitle,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodyMuted,
+            ),
+            const SizedBox(height: 32),
+            AuthGlassPanel(
+              child: Column(
+                children: [
+                  AuthSegmentedControl(
+                    activeLabel: 'Login',
+                    inactiveLabel: 'Register',
+                    onInactivePressed: widget.onCreateAccount,
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: authFieldDecoration(
+                      label: 'Email',
+                      hint: 'you@example.com',
+                      icon: Icons.mail_outline_rounded,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: authFieldDecoration(
+                      label: 'Password',
+                      icon: Icons.lock_outline_rounded,
+                    ),
+                  ),
+                  if (_error != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      _error!,
+                      style: const TextStyle(color: AppColors.error),
+                    ),
+                  ],
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text('Forgot password?'),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  AuthPrimaryButton(
+                    label: 'Log in',
+                    loading: _submitting,
+                    onPressed: _submitting ? null : _submit,
+                  ),
+                  const SizedBox(height: 22),
+                  const AuthOrDivider(),
+                  const SizedBox(height: 14),
+                  TextButton(
+                    onPressed: widget.onCreateAccount,
+                    child: const Text('Create a new account'),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 24),
-        Text(
-          widget.title,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.pageTitle,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          widget.subtitle,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.bodyMuted,
-        ),
-        const SizedBox(height: 36),
-        TextField(
-          controller: _emailController,
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            prefixIcon: Icon(Icons.mail_outline_rounded),
-          ),
-        ),
-        const SizedBox(height: 14),
-        TextField(
-          controller: _passwordController,
-          obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Password',
-            prefixIcon: Icon(Icons.lock_outline_rounded),
-          ),
-        ),
-        if (_error != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            _error!,
-            style: const TextStyle(color: AppColors.error),
-          ),
-        ],
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {},
-            child: const Text('Forgot password?'),
-          ),
-        ),
-        const SizedBox(height: 12),
-        FilledButton(
-          onPressed: _submitting ? null : _submit,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: _submitting
-                ? const SizedBox(
-                    height: 18,
-                    width: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('Log in'),
-          ),
-        ),
-        const SizedBox(height: 16),
-        TextButton(
-          onPressed: widget.onCreateAccount,
-          child: const Text('Create a new account'),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -106,7 +106,9 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
       debugPrint('playtest interest toggle failed: $e\n$st');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Something went wrong. Please try again.')),
+        const SnackBar(
+          content: Text('Something went wrong. Please try again.'),
+        ),
       );
     } finally {
       if (mounted) setState(() => _playtestBusy = false);
@@ -128,14 +130,22 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             expandedHeight: 370,
             pinned: true,
             backgroundColor: AppColors.background,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: _ImageOverlayButton(
+                icon: Icons.arrow_back_ios_new_rounded,
+                onPressed: () => Navigator.of(context).maybePop(),
+              ),
+            ),
             actions: [
-              IconButton(
-                onPressed: () {
-                  widget.onWishlist();
-                  setState(() => saved = !saved);
-                },
-                icon: Icon(
-                  saved
+              Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: _ImageOverlayButton(
+                  onPressed: () {
+                    widget.onWishlist();
+                    setState(() => saved = !saved);
+                  },
+                  icon: saved
                       ? Icons.favorite_rounded
                       : Icons.favorite_border_rounded,
                   color: saved ? AppColors.primary : Colors.white,
@@ -277,9 +287,8 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                       if (hasWebsite)
                         Expanded(
                           child: FilledButton.icon(
-                            onPressed: () => UrlLauncherService.openExternalUrl(
-                              websiteUrl,
-                            ),
+                            onPressed: () =>
+                                UrlLauncherService.openExternalUrl(websiteUrl),
                             icon: const Icon(Icons.public_rounded),
                             label: const Padding(
                               padding: EdgeInsets.symmetric(vertical: 15),
@@ -296,41 +305,43 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     width: double.infinity,
                     child: switch (_interestState) {
                       _InterestState.loading => FilledButton.icon(
-                          onPressed: null,
-                          icon: const _Spinner(),
-                          label: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            child: Text('Checking interest…'),
-                          ),
+                        onPressed: null,
+                        icon: const _Spinner(),
+                        label: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: Text('Checking interest…'),
                         ),
+                      ),
                       _InterestState.error => OutlinedButton.icon(
-                          onPressed: _loadInterestState,
-                          icon: const Icon(Icons.refresh_rounded),
-                          label: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            child: Text('Could not check interest — Tap to retry'),
+                        onPressed: _loadInterestState,
+                        icon: const Icon(Icons.refresh_rounded),
+                        label: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: Text(
+                            'Could not check interest — Tap to retry',
                           ),
                         ),
+                      ),
                       _InterestState.notInterested => FilledButton.icon(
-                          onPressed: _playtestBusy ? null : _toggleInterest,
-                          icon: _playtestBusy
-                              ? const _Spinner()
-                              : const Icon(Icons.emoji_people_outlined),
-                          label: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            child: Text("I'm Interested in Playtesting"),
-                          ),
+                        onPressed: _playtestBusy ? null : _toggleInterest,
+                        icon: _playtestBusy
+                            ? const _Spinner()
+                            : const Icon(Icons.emoji_people_outlined),
+                        label: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: Text("I'm Interested in Playtesting"),
                         ),
+                      ),
                       _InterestState.interested => OutlinedButton.icon(
-                          onPressed: _playtestBusy ? null : _toggleInterest,
-                          icon: _playtestBusy
-                              ? const _Spinner()
-                              : const Icon(Icons.check_circle_outline_rounded),
-                          label: const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            child: Text('Interested ✓'),
-                          ),
+                        onPressed: _playtestBusy ? null : _toggleInterest,
+                        icon: _playtestBusy
+                            ? const _Spinner()
+                            : const Icon(Icons.check_circle_outline_rounded),
+                        label: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: Text('Interested ✓'),
                         ),
+                      ),
                     },
                   ),
                 ],
@@ -338,6 +349,48 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ImageOverlayButton extends StatelessWidget {
+  const _ImageOverlayButton({
+    required this.icon,
+    required this.onPressed,
+    this.color = Colors.white,
+  });
+
+  final IconData icon;
+  final VoidCallback onPressed;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Material(
+        color: Colors.black.withValues(alpha: 0.48),
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onPressed,
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.30),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Icon(icon, color: color, size: 23),
+          ),
+        ),
       ),
     );
   }

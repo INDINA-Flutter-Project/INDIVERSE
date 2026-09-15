@@ -19,10 +19,12 @@ class DeveloperHomeScreen extends StatelessWidget {
     super.key,
     required this.games,
     required this.onGamesChanged,
+    this.developerName,
   });
 
   final List<Game> games;
   final Future<void> Function() onGamesChanged;
+  final String? developerName;
 
   @override
   Widget build(BuildContext context) {
@@ -36,14 +38,13 @@ class DeveloperHomeScreen extends StatelessWidget {
             const Expanded(
               child: Text('INDIVERSE', style: AppTextStyles.sectionTitle),
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none_rounded),
-            ),
           ],
         ),
         const SizedBox(height: 28),
-        const Text('Welcome, Developer', style: AppTextStyles.pageTitle),
+        Text(
+          'Welcome, ${developerName?.trim().isNotEmpty == true ? developerName!.trim() : 'Developer'}',
+          style: AppTextStyles.pageTitle,
+        ),
         const SizedBox(height: 8),
         const Text(
           "Let's bring your games to players and creators.",
@@ -75,7 +76,6 @@ class DeveloperHomeScreen extends StatelessWidget {
             const Expanded(
               child: Text('Your Games', style: AppTextStyles.sectionTitle),
             ),
-            TextButton(onPressed: () {}, child: const Text('See All')),
           ],
         ),
         const SizedBox(height: 12),

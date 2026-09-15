@@ -95,13 +95,6 @@ class GameCard extends StatelessWidget {
                 ],
               ),
             ),
-            IconButton(
-              onPressed: onWishlist,
-              icon: Icon(
-                saved ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                color: saved ? AppColors.primary : AppColors.textSecondary,
-              ),
-            ),
           ],
         ),
       ),

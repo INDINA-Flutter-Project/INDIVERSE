@@ -25,7 +25,7 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
   Widget build(BuildContext context) {
     final game = _game;
     final pages = [
-      _AboutTab(game: game, onEditGame: _openEditGame),
+      _AboutTab(game: game),
       _EventsTab(game: game, onAddEvent: _openAddEvent),
       const _LinksTab(),
     ];
@@ -37,15 +37,7 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
         Navigator.pop(context, _wasEdited);
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(game.name),
-          actions: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.more_vert_rounded),
-            ),
-          ],
-        ),
+        appBar: AppBar(title: Text(game.name)),
         body: ListView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           children: [
@@ -153,10 +145,9 @@ class _DeveloperGameDetailScreenState extends State<DeveloperGameDetailScreen> {
 }
 
 class _AboutTab extends StatelessWidget {
-  const _AboutTab({required this.game, required this.onEditGame});
+  const _AboutTab({required this.game});
 
   final Game game;
-  final VoidCallback onEditGame;
 
   @override
   Widget build(BuildContext context) {
@@ -170,12 +161,6 @@ class _AboutTab extends StatelessWidget {
         _DetailRow(
           label: 'Release Date',
           value: game.releaseDate ?? 'Coming soon',
-        ),
-        const SizedBox(height: 10),
-        OutlinedButton.icon(
-          onPressed: onEditGame,
-          icon: const Icon(Icons.edit_outlined),
-          label: const Text('Edit Game Details'),
         ),
       ],
     );
