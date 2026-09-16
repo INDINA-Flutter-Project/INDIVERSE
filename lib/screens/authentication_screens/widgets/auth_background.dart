@@ -296,19 +296,19 @@ class _AuthGlowPainter extends CustomPainter {
       ..shader =
           RadialGradient(
             colors: [
-              AppColors.primary.withValues(alpha: 0.42),
-              AppColors.primary.withValues(alpha: 0.07),
+              AppColors.primary.withValues(alpha: 0.22),
+              AppColors.primary.withValues(alpha: 0.035),
               Colors.transparent,
             ],
           ).createShader(
             Rect.fromCircle(
-              center: Offset(size.width * 0.78, size.height * 0.04),
-              radius: size.width * 0.62,
+              center: Offset(size.width * 0.72, size.height * 0.02),
+              radius: size.width * 0.95,
             ),
           );
     canvas.drawCircle(
-      Offset(size.width * 0.78, size.height * 0.04),
-      size.width * 0.62,
+      Offset(size.width * 0.72, size.height * 0.02),
+      size.width * 0.95,
       topGlow,
     );
 

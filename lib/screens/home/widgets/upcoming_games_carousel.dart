@@ -47,7 +47,7 @@ class _UpcomingGamesCarouselState extends State<UpcomingGamesCarousel> {
             enlargeCenterPage: true,
             autoPlay: true,
             autoPlayCurve: Curves.easeInOut,
-            autoPlayInterval: const Duration(seconds: 4),
+            autoPlayInterval: const Duration(seconds: 6),
             enableInfiniteScroll: showMultiple,
             onPageChanged: (index, reason) =>
                 setState(() => _currentIndex = index),

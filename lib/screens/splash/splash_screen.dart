@@ -49,12 +49,21 @@ class _SplashScreenState extends State<SplashScreen>
         pageBuilder: (_, animation, secondaryAnimation) =>
             const OnboardingScreen(),
         transitionsBuilder: (_, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOutExpo,
+          final curve = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          return ClipRect(
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(.08, 0),
+                end: Offset.zero,
+              ).animate(curve),
+              child: ScaleTransition(
+                scale: Tween<double>(begin: .97, end: 1).animate(curve),
+                child: child,
+              ),
             ),
-            child: child,
           );
         },
       ),
