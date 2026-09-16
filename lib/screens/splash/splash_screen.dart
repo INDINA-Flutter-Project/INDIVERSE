@@ -92,7 +92,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                   );
                   final shimmer = Curves.easeOutExpo.transform(
-                    ((_controller.value - 980 / 4100) / (1400 / 4100)).clamp(
+                    ((_controller.value - 820 / 4100) / (2400 / 4100)).clamp(
                       0.0,
                       1.0,
                     ),
@@ -117,6 +117,7 @@ class _SplashScreenState extends State<SplashScreen>
                               Image.asset(
                                 'assets/images/indiverse_logo.webp',
                                 width: width,
+                                filterQuality: FilterQuality.high,
                               ),
                               if (!reduceMotion)
                                 ShaderMask(
@@ -128,15 +129,16 @@ class _SplashScreenState extends State<SplashScreen>
                                       end: Alignment(position + 1, 1),
                                       colors: const [
                                         Colors.transparent,
-                                        Color(0xEBFFFFFF),
+                                        Color(0xFFFFFFFF),
                                         Colors.transparent,
                                       ],
-                                      stops: const [.30, .48, .66],
+                                      stops: const [.26, .50, .74],
                                     ).createShader(bounds);
                                   },
                                   child: Image.asset(
                                     'assets/images/indiverse_logo.webp',
                                     width: width,
+                                    filterQuality: FilterQuality.high,
                                   ),
                                 ),
                             ],
