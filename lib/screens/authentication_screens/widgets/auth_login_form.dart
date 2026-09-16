@@ -107,26 +107,10 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 76, 24, 24),
           children: [
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 360),
-              switchInCurve: Curves.easeOutExpo,
-              switchOutCurve: Curves.easeInOutCubic,
-              transitionBuilder: (child, animation) => FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: Offset(_signUp ? .08 : -.08, 0),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                ),
-              ),
-              child: Text(
-                _signUp ? widget.signupTitle : widget.loginTitle,
-                key: ValueKey(_signUp),
-                textAlign: TextAlign.center,
-                style: AppTextStyles.pageTitle.copyWith(fontSize: 30),
-              ),
+            Text(
+              _signUp ? widget.signupTitle : widget.loginTitle,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.pageTitle.copyWith(fontSize: 30),
             ),
             const SizedBox(height: 10),
             Text(
@@ -143,40 +127,19 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
                     onChanged: _setMode,
                   ),
                   const SizedBox(height: 20),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 420),
-                    switchInCurve: Curves.easeOutExpo,
-                    switchOutCurve: Curves.easeInOutCubic,
-                    transitionBuilder: (child, animation) {
-                      return ClipRect(
-                        child: FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: Offset(_signUp ? 1 : -1, 0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          ),
+                  _signUp
+                      ? _SignupFields(
+                          nameController: _nameController,
+                          emailController: _emailController,
+                          passwordController: _passwordController,
+                          confirmController: _confirmController,
+                          nameLabel: widget.nameLabel,
+                          nameHint: widget.nameHint,
+                        )
+                      : _LoginFields(
+                          emailController: _emailController,
+                          passwordController: _passwordController,
                         ),
-                      );
-                    },
-                    child: _signUp
-                        ? _SignupFields(
-                            key: const ValueKey('signup-fields'),
-                            nameController: _nameController,
-                            emailController: _emailController,
-                            passwordController: _passwordController,
-                            confirmController: _confirmController,
-                            nameLabel: widget.nameLabel,
-                            nameHint: widget.nameHint,
-                          )
-                        : _LoginFields(
-                            key: const ValueKey('login-fields'),
-                            emailController: _emailController,
-                            passwordController: _passwordController,
-                          ),
-                  ),
                   if (_error != null) ...[
                     const SizedBox(height: 12),
                     Text(
@@ -185,17 +148,7 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
                       style: const TextStyle(color: AppColors.error),
                     ),
                   ],
-                  if (!_signUp)
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: const Text('Forgot password?'),
-                      ),
-                    )
-                  else
-                    const SizedBox(height: 22),
-                  if (!_signUp) const SizedBox(height: 12),
+                  const SizedBox(height: 22),
                   AuthPrimaryButton(
                     label: _signUp ? 'Sign up' : 'Log in',
                     loading: _submitting,
@@ -213,7 +166,6 @@ class _AuthLoginFormState extends State<AuthLoginForm> {
 
 class _LoginFields extends StatelessWidget {
   const _LoginFields({
-    super.key,
     required this.emailController,
     required this.passwordController,
   });
@@ -233,7 +185,6 @@ class _LoginFields extends StatelessWidget {
 
 class _SignupFields extends StatelessWidget {
   const _SignupFields({
-    super.key,
     required this.nameController,
     required this.emailController,
     required this.passwordController,
