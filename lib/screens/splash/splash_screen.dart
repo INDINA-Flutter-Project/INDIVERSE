@@ -109,17 +109,8 @@ class _SplashScreenState extends State<SplashScreen>
                       offset: Offset(0, reduceMotion ? 0 : 20 * (1 - entrance)),
                       child: Transform.scale(
                         scale: reduceMotion ? 1 : .88 + .12 * entrance,
-                        child: Container(
+                        child: SizedBox(
                           width: width,
-                          decoration: const BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x221ED87A),
-                                blurRadius: 8,
-                                spreadRadius: 0,
-                              ),
-                            ],
-                          ),
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
