@@ -58,14 +58,12 @@ class AuthGlassPanel extends StatelessWidget {
 class AuthSegmentedControl extends StatelessWidget {
   const AuthSegmentedControl({
     super.key,
-    required this.activeLabel,
-    required this.inactiveLabel,
-    required this.onInactivePressed,
+    required this.signUpSelected,
+    required this.onChanged,
   });
 
-  final String activeLabel;
-  final String inactiveLabel;
-  final VoidCallback onInactivePressed;
+  final bool signUpSelected;
+  final ValueChanged<bool> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -76,17 +74,58 @@ class AuthSegmentedControl extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: Colors.white.withValues(alpha: 0.11)),
       ),
-      child: Row(
-        children: [
-          Expanded(child: _SegmentPill(label: activeLabel, active: true)),
-          Expanded(
-            child: _SegmentPill(
-              label: inactiveLabel,
-              active: false,
-              onTap: onInactivePressed,
+      child: SizedBox(
+        height: 48,
+        child: Stack(
+          children: [
+            AnimatedAlign(
+              duration: const Duration(milliseconds: 360),
+              curve: Curves.easeInOutCubic,
+              alignment: signUpSelected
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: .5,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF37F2A0), Color(0xFF08CE7E)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: .22),
+                        blurRadius: 16,
+                        offset: const Offset(0, 7),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+            Row(
+              children: [
+                Expanded(
+                  child: _SegmentButton(
+                    label: 'Login',
+                    selected: !signUpSelected,
+                    onTap: () => onChanged(false),
+                  ),
+                ),
+                Expanded(
+                  child: _SegmentButton(
+                    label: 'Sign up',
+                    selected: signUpSelected,
+                    onTap: () => onChanged(true),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -212,54 +251,38 @@ class AuthOrDivider extends StatelessWidget {
   }
 }
 
-class _SegmentPill extends StatelessWidget {
-  const _SegmentPill({required this.label, required this.active, this.onTap});
+class _SegmentButton extends StatelessWidget {
+  const _SegmentButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
-  final bool active;
-  final VoidCallback? onTap;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final child = AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      decoration: BoxDecoration(
-        gradient: active
-            ? const LinearGradient(
-                colors: [Color(0xFF37F2A0), Color(0xFF08CE7E)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              )
-            : null,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: active
-            ? [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.22),
-                  blurRadius: 16,
-                  offset: const Offset(0, 7),
-                ),
-              ]
-            : null,
-      ),
-      child: Text(
-        label,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'Sora',
-          fontSize: 15,
-          fontWeight: FontWeight.w900,
-          color: active ? AppColors.background : AppColors.textSecondary,
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 260),
+            curve: Curves.easeInOutCubic,
+            style: TextStyle(
+              fontFamily: 'Sora',
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+              color: selected ? AppColors.background : AppColors.textSecondary,
+            ),
+            child: Text(label),
+          ),
         ),
       ),
-    );
-
-    if (active || onTap == null) return child;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: child,
     );
   }
 }

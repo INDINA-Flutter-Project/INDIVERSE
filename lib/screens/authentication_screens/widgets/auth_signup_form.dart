@@ -123,9 +123,10 @@ class _AuthSignupFormState extends State<AuthSignupForm> {
               child: Column(
                 children: [
                   AuthSegmentedControl(
-                    activeLabel: 'Register',
-                    inactiveLabel: 'Login',
-                    onInactivePressed: widget.onHaveAccount,
+                    signUpSelected: true,
+                    onChanged: (signUp) {
+                      if (!signUp) widget.onHaveAccount();
+                    },
                   ),
                   const SizedBox(height: 20),
                   if (widget.extraFieldController != null) ...[

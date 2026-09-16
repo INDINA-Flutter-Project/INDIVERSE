@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
+import '../../core/widget/glass_action.dart';
 import 'developer_login/developer_login_screen.dart';
 import 'user_login/user_login_screen.dart';
 import 'widgets/auth_background.dart';
@@ -20,11 +22,6 @@ class LoginSelectionScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'assets/images/indiverse_wordmark.png',
-                      width: 160,
-                    ),
-                    const SizedBox(height: 22),
                     const Text(
                       'INDIVERSE',
                       textAlign: TextAlign.center,
@@ -47,7 +44,7 @@ class LoginSelectionScreen extends StatelessWidget {
                 children: [
                   _RoleButton(
                     label: 'Continue as User',
-                    icon: Icons.person_rounded,
+                    icon: const Icon(Icons.person_rounded),
                     filled: true,
                     onPressed: () => Navigator.push(
                       context,
@@ -59,7 +56,7 @@ class LoginSelectionScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   _RoleButton(
                     label: 'Continue as Developer',
-                    icon: Icons.code_rounded,
+                    icon: const Icon(Icons.code_rounded),
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -80,71 +77,83 @@ class LoginSelectionScreen extends StatelessWidget {
 
 class _RoleButton extends StatelessWidget {
   const _RoleButton({
-    required this.label,
-    required this.icon,
     required this.onPressed,
+    required this.icon,
+    required this.label,
     this.filled = false,
   });
 
-  final String label;
-  final IconData icon;
   final VoidCallback onPressed;
+  final Widget icon;
+  final String label;
   final bool filled;
 
   @override
   Widget build(BuildContext context) {
-    final foreground = filled ? AppColors.background : AppColors.primary;
-
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: filled ? null : Colors.white.withValues(alpha: 0.055),
-        gradient: filled
-            ? const LinearGradient(
-                colors: [Color(0xFF37F2A0), Color(0xFF03C878)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              )
-            : null,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: filled
-              ? Colors.white.withValues(alpha: 0.16)
-              : Colors.white.withValues(alpha: 0.12),
-        ),
-        boxShadow: filled
-            ? [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.24),
-                  blurRadius: 24,
-                  offset: const Offset(0, 10),
-                ),
-              ]
-            : null,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(28),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: foreground, size: 22),
-                const SizedBox(width: 12),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: 'Sora',
-                    fontWeight: FontWeight.w900,
-                    fontSize: 17,
-                    color: foreground,
-                  ),
-                ),
-              ],
+    if (!filled) {
+      return GlassAction(
+        onPressed: onPressed,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconTheme(
+              data: const IconThemeData(color: AppColors.primary, size: 22),
+              child: icon,
             ),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: AppTextStyles.interface.copyWith(
+                color: AppColors.primary,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(999),
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.primaryDeep],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: .18),
+            blurRadius: 14,
+            offset: const Offset(0, 7),
           ),
+        ],
+      ),
+      child: FilledButton(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          foregroundColor: const Color(0xFF06170F),
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconTheme(
+              data: const IconThemeData(color: Color(0xFF06170F), size: 22),
+              child: icon,
+            ),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: AppTextStyles.interface.copyWith(
+                color: const Color(0xFF06170F),
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
         ),
       ),
     );

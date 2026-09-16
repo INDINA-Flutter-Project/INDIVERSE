@@ -21,9 +21,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/indiverse_wordmark.png
-    - assets/images/indiverse_icon.png
-    - assets/images/indiverse_mark.png
+    - assets/images/
   fonts:
     - family: Sora
       fonts:

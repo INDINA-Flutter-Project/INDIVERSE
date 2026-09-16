@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../service/auth_service.dart';
-import '../../player/player_shell.dart';
+import '../../preferences/user_preferences_screen.dart';
 import '../widgets/auth_signup_form.dart';
 
 class UserSignupScreen extends StatefulWidget {
@@ -58,7 +58,9 @@ class _UserSignupScreenState extends State<UserSignupScreen> {
     }
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const PlayerShell()),
+      MaterialPageRoute(
+        builder: (_) => const UserPreferencesScreen(openedFromSignup: true),
+      ),
       (_) => false,
     );
     return null;

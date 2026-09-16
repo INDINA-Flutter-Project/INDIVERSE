@@ -1,4 +1,5 @@
 import 'package:indina/models/game.dart';
+import 'package:indina/models/user_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Database {
@@ -6,6 +7,7 @@ class Database {
     : supabase = client ?? Supabase.instance.client;
 
   static const _gamesTable = 'games_made_in_ksa';
+  static const _preferencesTable = 'user_preferences';
   final SupabaseClient supabase;
 
   Future<List<Game>> getAllGames() async {
@@ -78,5 +80,22 @@ class Database {
 
   Future<void> removeGame(int id) async {
     await supabase.from(_gamesTable).delete().eq('id', id);
+  }
+
+  Future<UserPreferences?> getUserPreferences(String userId) async {
+    final row = await supabase
+        .from(_preferencesTable)
+        .select()
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (row == null) return null;
+    return UserPreferences.fromJson(row);
+  }
+
+  Future<void> saveUserPreferences(UserPreferences preferences) async {
+    await supabase
+        .from(_preferencesTable)
+        .upsert(preferences.toJson(), onConflict: 'user_id');
   }
 }

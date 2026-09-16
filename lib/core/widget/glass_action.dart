@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
@@ -27,71 +29,80 @@ class GlassAction extends StatelessWidget {
 
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
+      child: ClipRRect(
         borderRadius: radius,
-        child: Ink(
-          decoration: BoxDecoration(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          child: InkWell(
+            onTap: onPressed,
             borderRadius: radius,
-            border: Border.all(color: AppColors.glassBorder),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.095),
-                AppColors.glassFill,
-                AppColors.primary.withValues(alpha: 0.10),
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.12),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+            child: Ink(
+              decoration: BoxDecoration(
+                borderRadius: radius,
+                border: Border.all(color: Colors.white.withValues(alpha: 0.13)),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withValues(alpha: 0.105),
+                    Colors.white.withValues(alpha: 0.04),
+                    AppColors.primary.withValues(alpha: 0.035),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.22),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: radius,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.16),
-                        Colors.transparent,
-                        Colors.transparent,
-                      ],
-                      stops: const [0, 0.38, 1],
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: radius,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.white.withValues(alpha: 0.14),
+                            Colors.transparent,
+                          ],
+                          stops: const [0, 0.48],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: padding,
-                child:
-                    child ??
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (icon != null) ...[
-                          Icon(icon, size: 18, color: AppColors.textPrimary),
-                          const SizedBox(width: 8),
-                        ],
-                        Text(
-                          label!,
-                          style: AppTextStyles.interface.copyWith(
-                            color: AppColors.textPrimary,
-                            fontWeight: FontWeight.w700,
-                          ),
+                  Padding(
+                    padding: padding,
+                    child:
+                        child ??
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (icon != null) ...[
+                              Icon(
+                                icon,
+                                size: 18,
+                                color: AppColors.textPrimary,
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                            Text(
+                              label!,
+                              style: AppTextStyles.interface.copyWith(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

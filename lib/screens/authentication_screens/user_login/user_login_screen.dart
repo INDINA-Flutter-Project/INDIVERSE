@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../service/auth_service.dart';
 import '../../player/player_shell.dart';
-import '../user_signup/user_signup_screen.dart';
+import '../../preferences/user_preferences_screen.dart';
 import '../widgets/auth_login_form.dart';
 
 class UserLoginScreen extends StatelessWidget {
@@ -17,18 +17,16 @@ class UserLoginScreen extends StatelessWidget {
     final authService = AuthService();
     try {
       await authService.signIn(email: email, password: password);
-    } on AuthException catch (e) {
-      return e.message;
-    } catch (e, st) {
-      debugPrint('User signIn failed: $e\n$st');
-      return 'Something went wrong: $e';
+    } on AuthException catch (exception) {
+      return exception.message;
+    } catch (exception, stackTrace) {
+      debugPrint('User signIn failed: $exception\n$stackTrace');
+      return 'Something went wrong: $exception';
     }
-
     if (authService.currentRole != 'user') {
       await authService.signOut();
       return 'This account is a developer account. Use Developer login instead.';
     }
-
     if (!context.mounted) return null;
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const PlayerShell()),
@@ -37,20 +35,53 @@ class UserLoginScreen extends StatelessWidget {
     return null;
   }
 
+  Future<String?> _signup(
+    BuildContext context,
+    String displayName,
+    String email,
+    String password,
+  ) async {
+    final authService = AuthService();
+    try {
+      final response = await authService.signUp(
+        email: email,
+        password: password,
+        role: 'user',
+        displayName: displayName,
+      );
+      if (!context.mounted) return null;
+      if (response.session == null) {
+        return 'Check your email to confirm your account, then log in.';
+      }
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => const UserPreferencesScreen(openedFromSignup: true),
+        ),
+        (_) => false,
+      );
+      return null;
+    } on AuthException catch (exception) {
+      return exception.message;
+    } catch (exception, stackTrace) {
+      debugPrint('User signUp failed: $exception\n$stackTrace');
+      return 'Something went wrong: $exception';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: AuthLoginForm(
-        title: 'User login',
+        loginTitle: 'User login',
+        signupTitle: 'User sign up',
         subtitle: 'Discover and wishlist Saudi indie games.',
-        icon: Icons.sports_esports_rounded,
+        nameLabel: 'Display Name',
+        nameHint: 'e.g. Ahmed',
         onLogin: (email, password) => _login(context, email, password),
-        onCreateAccount: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const UserSignupScreen()),
-        ),
+        onSignup: (name, email, password) =>
+            _signup(context, name, email, password),
       ),
     );
   }
