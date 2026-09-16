@@ -240,31 +240,76 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: CircleAvatar(
-                      backgroundColor: AppColors.primaryContainer,
-                      child: Icon(
-                        Icons.celebration_rounded,
-                        color: AppColors.primary,
+                  child: Column(
+                    children: [
+                      const ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: AppColors.primaryContainer,
+                          child: Icon(
+                            Icons.celebration_rounded,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        title: Text(
+                          'Playable demo showcase',
+                          style: TextStyle(fontFamily: 'Michroma'),
+                        ),
+                        subtitle: Text(
+                          '18 September · Riyadh',
+                          style: TextStyle(fontFamily: 'Tomorrow'),
+                        ),
+                        trailing: Text(
+                          'UPCOMING',
+                          style: TextStyle(
+                            fontFamily: 'Tomorrow',
+                            color: AppColors.primary,
+                            fontSize: 9,
+                          ),
+                        ),
                       ),
-                    ),
-                    title: Text(
-                      'Playable demo showcase',
-                      style: TextStyle(fontFamily: 'Michroma'),
-                    ),
-                    subtitle: Text(
-                      '18 September · Riyadh',
-                      style: TextStyle(fontFamily: 'Tomorrow'),
-                    ),
-                    trailing: Text(
-                      'UPCOMING',
-                      style: TextStyle(
-                        fontFamily: 'Tomorrow',
-                        color: AppColors.primary,
-                        fontSize: 9,
-                      ),
-                    ),
+                      if (isUpcoming) ...[
+                        const Divider(color: AppColors.border, height: 24),
+                        switch (_interestState) {
+                          _InterestState.loading => const _ActivityRow(
+                            title: 'Playtesting',
+                            subtitle: 'Checking your interest…',
+                            trailing: _Spinner(),
+                          ),
+                          _InterestState.error => _ActivityRow(
+                            title: 'Playtesting',
+                            subtitle: 'Could not check interest · Tap to retry',
+                            trailing: const Icon(
+                              Icons.refresh_rounded,
+                              color: AppColors.textSecondary,
+                            ),
+                            onTap: _loadInterestState,
+                          ),
+                          _InterestState.notInterested => _ActivityRow(
+                            title: 'Playtesting',
+                            subtitle: 'Interested in testing this game',
+                            trailing: _playtestBusy
+                                ? const _Spinner()
+                                : const Icon(
+                                    Icons.chevron_right_rounded,
+                                    color: AppColors.textSecondary,
+                                  ),
+                            onTap: _playtestBusy ? null : _toggleInterest,
+                          ),
+                          _InterestState.interested => _ActivityRow(
+                            title: 'Playtesting',
+                            subtitle: "You're interested in playtesting",
+                            trailing: _playtestBusy
+                                ? const _Spinner()
+                                : const Icon(
+                                    Icons.check_circle_rounded,
+                                    color: AppColors.primary,
+                                  ),
+                            onTap: _playtestBusy ? null : _toggleInterest,
+                          ),
+                        },
+                      ],
+                    ],
                   ),
                 ),
                 if (hasSteam || hasWebsite) ...[
@@ -297,52 +342,6 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                           ),
                         ),
                     ],
-                  ),
-                ],
-                if (isUpcoming) ...[
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: switch (_interestState) {
-                      _InterestState.loading => FilledButton.icon(
-                        onPressed: null,
-                        icon: const _Spinner(),
-                        label: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          child: Text('Checking interest…'),
-                        ),
-                      ),
-                      _InterestState.error => OutlinedButton.icon(
-                        onPressed: _loadInterestState,
-                        icon: const Icon(Icons.refresh_rounded),
-                        label: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          child: Text(
-                            'Could not check interest — Tap to retry',
-                          ),
-                        ),
-                      ),
-                      _InterestState.notInterested => FilledButton.icon(
-                        onPressed: _playtestBusy ? null : _toggleInterest,
-                        icon: _playtestBusy
-                            ? const _Spinner()
-                            : const Icon(Icons.emoji_people_outlined),
-                        label: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          child: Text("I'm Interested in Playtesting"),
-                        ),
-                      ),
-                      _InterestState.interested => OutlinedButton.icon(
-                        onPressed: _playtestBusy ? null : _toggleInterest,
-                        icon: _playtestBusy
-                            ? const _Spinner()
-                            : const Icon(Icons.check_circle_outline_rounded),
-                        label: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          child: Text('Interested ✓'),
-                        ),
-                      ),
-                    },
                   ),
                 ],
               ],
@@ -392,6 +391,35 @@ class _ImageOverlayButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ActivityRow extends StatelessWidget {
+  const _ActivityRow({
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+    this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final Widget trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      onTap: onTap,
+      leading: const CircleAvatar(
+        backgroundColor: AppColors.primaryContainer,
+        child: Icon(Icons.emoji_people_outlined, color: AppColors.primary),
+      ),
+      title: Text(title, style: const TextStyle(fontFamily: 'Michroma')),
+      subtitle: Text(subtitle, style: const TextStyle(fontFamily: 'Tomorrow')),
+      trailing: trailing,
     );
   }
 }

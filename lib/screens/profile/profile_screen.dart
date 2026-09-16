@@ -11,7 +11,12 @@ import '../authentication_screens/login_selection_screen.dart';
 import '../preferences/user_preferences_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  const ProfileScreen({super.key, this.onPreferencesChanged});
+
+  /// Notified after preferences are successfully edited, so an ancestor
+  /// (PlayerShell) can refresh whatever it derives from them (e.g. Home's
+  /// "For you" section) without an app restart.
+  final VoidCallback? onPreferencesChanged;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -34,7 +39,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _refreshPreferences() {
-    setState(() => _preferencesFuture = _loadPreferences());
+    setState(() {
+      _preferencesFuture = _loadPreferences();
+    });
   }
 
   Future<void> _editPreferences(UserPreferences? preferences) async {
@@ -44,7 +51,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    if (changed == true) _refreshPreferences();
+    if (changed == true) {
+      _refreshPreferences();
+      widget.onPreferencesChanged?.call();
+    }
   }
 
   Future<void> _signOut() async {

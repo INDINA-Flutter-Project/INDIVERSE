@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../models/game.dart';
@@ -19,6 +20,7 @@ class PlayerShell extends StatefulWidget {
 class _PlayerShellState extends State<PlayerShell> {
   final Database _database = Database();
   late Future<List<Game>> _gamesFuture;
+  late Future<List<String>> _preferredGenresFuture;
 
   int selectedIndex = 0;
   Set<int> wishlist = {};
@@ -27,10 +29,28 @@ class _PlayerShellState extends State<PlayerShell> {
   void initState() {
     super.initState();
     _gamesFuture = _database.getAllGames();
+    _preferredGenresFuture = _loadPreferredGenres();
+  }
+
+  Future<List<String>> _loadPreferredGenres() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return const <String>[];
+
+    try {
+      final preferences = await _database.getUserPreferences(userId);
+      return preferences?.genres ?? const <String>[];
+    } catch (e, st) {
+      debugPrint('getUserPreferences failed: $e\n$st');
+      return const <String>[];
+    }
   }
 
   void _retry() => setState(() {
     _gamesFuture = _database.getAllGames();
+  });
+
+  void _reloadPreferredGenres() => setState(() {
+    _preferredGenresFuture = _loadPreferredGenres();
   });
 
   void toggleWishlist(Game game) => setState(() {
@@ -56,10 +76,17 @@ class _PlayerShellState extends State<PlayerShell> {
 
             final games = snapshot.data ?? const <Game>[];
             final screens = [
-              HomeScreen(
-                games: games,
-                wishlist: wishlist,
-                onWishlist: toggleWishlist,
+              FutureBuilder<List<String>>(
+                future: _preferredGenresFuture,
+                builder: (context, preferencesSnapshot) {
+                  return HomeScreen(
+                    games: games,
+                    wishlist: wishlist,
+                    onWishlist: toggleWishlist,
+                    preferredGenres:
+                        preferencesSnapshot.data ?? const <String>[],
+                  );
+                },
               ),
               ExploreScreen(
                 games: games,
@@ -71,7 +98,7 @@ class _PlayerShellState extends State<PlayerShell> {
                 wishlist: wishlist,
                 onWishlist: toggleWishlist,
               ),
-              const ProfileScreen(),
+              ProfileScreen(onPreferencesChanged: _reloadPreferredGenres),
             ];
 
             return IndexedStack(index: selectedIndex, children: screens);

@@ -13,11 +13,17 @@ class HomeScreen extends StatelessWidget {
     required this.games,
     required this.wishlist,
     required this.onWishlist,
+    required this.preferredGenres,
   });
 
   final List<Game> games;
   final Set<int> wishlist;
   final ValueChanged<Game> onWishlist;
+
+  /// The signed-in player's saved genre preferences, as loaded by
+  /// PlayerShell from Database.getUserPreferences. Empty when the player
+  /// hasn't saved preferences yet (or preferences failed to load).
+  final List<String> preferredGenres;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +34,19 @@ class HomeScreen extends StatelessWidget {
     final upcomingGames = games
         .where((game) => game.status?.trim().toLowerCase() == 'upcoming')
         .toList();
+
+    final normalizedPreferences = preferredGenres
+        .map((genre) => genre.trim().toLowerCase())
+        .where((genre) => genre.isNotEmpty)
+        .toSet();
+
+    final matchingGames = games.where((game) {
+      return game.genres.any(
+        (genre) => normalizedPreferences.contains(genre.trim().toLowerCase()),
+      );
+    }).toList();
+
+    final forYouGames = preferredGenres.isEmpty ? games : matchingGames;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 24),
@@ -74,25 +93,59 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: games.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final game = games[index];
+          if (forYouGames.isEmpty)
+            const _ForYouEmpty()
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: forYouGames.length,
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final game = forYouGames[index];
 
-              return GameCard(
-                game: game,
-                saved: wishlist.contains(game.id),
-                onWishlist: () => onWishlist(game),
-              );
-            },
-          ),
+                return GameCard(
+                  game: game,
+                  saved: wishlist.contains(game.id),
+                  onWishlist: () => onWishlist(game),
+                );
+              },
+            ),
         ],
       ),
     );
   }
+}
+
+class _ForYouEmpty extends StatelessWidget {
+  const _ForYouEmpty();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: AppColors.border),
+    ),
+    child: const Column(
+      children: [
+        Icon(Icons.tune_rounded, color: AppColors.primary),
+        SizedBox(height: 10),
+        Text(
+          'No games match your preferences yet.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Tomorrow',
+            color: AppColors.textSecondary,
+            fontSize: 15,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _GamesEmpty extends StatelessWidget {
