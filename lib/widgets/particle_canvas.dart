@@ -139,8 +139,8 @@ class ParticlePainter extends CustomPainter {
       Paint()
         ..shader = const RadialGradient(
           center: Alignment(0, -.2),
-          radius: .75,
-          colors: [Color(0x111ED87A), Color(0x001ED87A)],
+          radius: 1.05,
+          colors: [Color(0x0D1ED87A), Color(0x001ED87A)],
         ).createShader(rect),
     );
 

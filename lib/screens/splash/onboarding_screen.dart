@@ -133,30 +133,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      AnimatedBuilder(
-                        animation: _logoController,
-                        builder: (context, child) {
-                          final value = reduceMotion
-                              ? 1.0
-                              : Curves.easeOutExpo.transform(
-                                  _logoController.value,
-                                );
-                          return Opacity(
-                            opacity: value * .88,
-                            child: Transform.translate(
-                              offset: Offset(0, -6 * (1 - value)),
-                              child: Transform.scale(
-                                scale: .88 + .12 * value,
-                                child: child,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Image.asset(
-                          'assets/images/indiverse_icon.webp',
-                          height: 20,
-                        ),
-                      ),
                       Positioned(
                         right: 16,
                         child: IgnorePointer(
@@ -370,7 +346,7 @@ class _StaggeredTitle extends StatelessWidget {
           character,
           style: AppTextStyles.onboardingTitle.copyWith(
             color: _ink,
-            fontSize: 22,
+            fontSize: 24,
             height: 1.3,
             fontWeight: FontWeight.w700,
           ),
