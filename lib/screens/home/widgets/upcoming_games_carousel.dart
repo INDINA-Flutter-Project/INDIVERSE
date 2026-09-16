@@ -42,10 +42,11 @@ class _UpcomingGamesCarouselState extends State<UpcomingGamesCarousel> {
             );
           },
           options: CarouselOptions(
-            height: 310,
-            viewportFraction: 1.0,
-            enlargeCenterPage: false,
-            autoPlay: showMultiple,
+            height: 280,
+            viewportFraction: 1,
+            enlargeCenterPage: true,
+            autoPlay: true,
+            autoPlayCurve: Curves.easeInOut,
             autoPlayInterval: const Duration(seconds: 6),
             enableInfiniteScroll: showMultiple,
             onPageChanged: (index, reason) =>
@@ -106,68 +107,74 @@ class _UpcomingHeroCard extends StatelessWidget {
             ),
           );
         },
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (game.coverImage != null)
-              Image.network(
-                game.coverImage!,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    const ColoredBox(color: AppColors.surface),
-              )
-            else
+        child: Container(
+          margin: EdgeInsets.only(right: 7),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
               const ColoredBox(color: AppColors.surface),
+              if (game.coverImage != null)
+                Image.network(
+                  game.coverImage!,
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const SizedBox.shrink(),
+                ),
 
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.transparent, Color(0xE6070C0B)],
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Color(0xE6070C0B)],
+                  ),
                 ),
               ),
-            ),
 
-            Positioned(
-              left: 20,
-              right: 18,
-              bottom: 20,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'UPCOMING',
-                    style: TextStyle(
-                      fontFamily: 'Tomorrow',
-                      color: AppColors.primary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    game.name,
-                    style: const TextStyle(
-                      fontFamily: 'Michroma',
-                      fontSize: 25,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  if (game.genres.isNotEmpty)
-                    Text(
-                      game.genres.join('  •  '),
-                      style: const TextStyle(
+              Positioned(
+                left: 20,
+                right: 18,
+                bottom: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'UPCOMING',
+                      style: TextStyle(
                         fontFamily: 'Tomorrow',
-                        color: AppColors.textSecondary,
-                        fontSize: 12,
+                        color: AppColors.primary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1,
                       ),
                     ),
-                ],
+                    const SizedBox(height: 6),
+                    // Text(
+                    //   game.name,
+                    //   maxLines: 2,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   style: const TextStyle(
+                    //     fontFamily: 'Michroma',
+                    //     fontSize: 25,
+                    //     fontWeight: FontWeight.w800,
+                    //   ),
+                    // ),
+                    if (game.genres.isNotEmpty)
+                      Text(
+                        game.genres.join('  •  '),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Tomorrow',
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
