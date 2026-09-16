@@ -1,8 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../widgets/particle_canvas.dart';
+import '../Developer/developer_shell.dart';
+import '../authentication_screens/login_selection_screen.dart';
+import '../player/player_shell.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 4100),
     )..forward();
     _controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) _openOnboarding();
+      if (status == AnimationStatus.completed) _openNext();
     });
   }
 
@@ -41,13 +46,29 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  void _openOnboarding() {
+  Future<void> _openNext() async {
+    if (!mounted) return;
+    final session = Supabase.instance.client.auth.currentSession;
+    final Widget destination;
+    if (session != null) {
+      destination = Supabase.instance.client.auth.currentUser?.userMetadata?['role'] ==
+              'developer'
+          ? const DeveloperShell()
+          : const PlayerShell();
+    } else {
+      final preferences = await SharedPreferences.getInstance();
+      final onboardingSeen = preferences.getBool('onboarding_seen') ?? false;
+      if (!onboardingSeen) await preferences.setBool('onboarding_seen', true);
+      destination = onboardingSeen
+          ? const LoginSelectionScreen()
+          : const OnboardingScreen();
+    }
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 600),
         pageBuilder: (_, animation, secondaryAnimation) =>
-            const OnboardingScreen(),
+            destination,
         transitionsBuilder: (_, animation, secondaryAnimation, child) {
           final curve = CurvedAnimation(
             parent: animation,

@@ -174,9 +174,10 @@ class _EmptyGamesNotice extends StatelessWidget {
             style: AppTextStyles.bodyMuted,
           ),
           const SizedBox(height: 12),
-          OutlinedButton(
+          OutlinedButton.icon(
             onPressed: onAddGame,
-            child: const Text('Add your first game'),
+            icon: const Icon(Icons.add_rounded, color: AppColors.primary),
+            label: const Text('Add your first game', style: TextStyle(fontSize: 13)),
           ),
         ],
       ),
