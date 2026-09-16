@@ -36,12 +36,12 @@ class GameCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: SizedBox(
-                width: 94,
-                height: 112,
+                width: 160,
+                height: 110,
                 child: game.coverImage != null
                     ? Image.network(
                         game.coverImage!,
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                         errorBuilder: (context, error, stackTrace) =>
                             const ColoredBox(color: AppColors.background),
                       )
@@ -77,6 +77,8 @@ class GameCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     game.developer ?? game.publisher ?? 'Independent studio',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontFamily: 'Tomorrow',
                       color: AppColors.textSecondary,
@@ -86,6 +88,8 @@ class GameCard extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     game.genres.take(2).join('  •  '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontFamily: 'Tomorrow',
                       color: AppColors.textSecondary,

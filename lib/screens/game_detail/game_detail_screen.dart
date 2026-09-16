@@ -158,7 +158,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                       game.coverImage!,
                       width: double.infinity,
                       height: 380,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                       errorBuilder: (context, error, stackTrace) =>
                           const ColoredBox(color: AppColors.surface),
                     )

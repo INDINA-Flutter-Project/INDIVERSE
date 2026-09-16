@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:indina/screens/home/widgets/featured_game.dart';
 import 'package:indina/screens/home/widgets/header.dart';
+import 'package:indina/screens/home/widgets/upcoming_games_carousel.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../models/game.dart';
@@ -25,7 +25,9 @@ class HomeScreen extends StatelessWidget {
       return const _GamesEmpty();
     }
 
-    final featuredGame = games.first;
+    final upcomingGames = games
+        .where((game) => game.status?.trim().toLowerCase() == 'upcoming')
+        .toList();
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 24),
@@ -55,12 +57,14 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 26),
-          FeaturedGame(
-            game: featuredGame,
-            saved: wishlist.contains(featuredGame.id),
-            onWishlist: () => onWishlist(featuredGame),
-          ),
-          const SizedBox(height: 30),
+          if (upcomingGames.isNotEmpty) ...[
+            UpcomingGamesCarousel(
+              games: upcomingGames,
+              wishlist: wishlist,
+              onWishlist: onWishlist,
+            ),
+            const SizedBox(height: 30),
+          ],
           const Text(
             'For you',
             style: TextStyle(
