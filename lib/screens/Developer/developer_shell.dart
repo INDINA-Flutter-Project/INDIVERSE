@@ -4,9 +4,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/game.dart';
 import '../../service/database.dart';
+import 'developer_creator_outreach_screen.dart';
 import 'developer_home_screen.dart';
 import 'developer_profile_screen.dart';
-import 'developer_creators_screen.dart';
 import 'playtesters_screen.dart';
 
 /// Owns developer-level navigation and the signed-in developer's real games.
@@ -78,7 +78,7 @@ class _DeveloperShellState extends State<DeveloperShell> {
                 developerName: developerName,
               ),
               const PlaytestersScreen(),
-              DeveloperCreatorsScreen(games: games),
+              DeveloperCreatorOutreachScreen(games: games),
               const DeveloperProfileScreen(),
             ];
 
@@ -101,9 +101,9 @@ class _DeveloperShellState extends State<DeveloperShell> {
             label: 'Playtesters',
           ),
           NavigationDestination(
-            icon: Icon(Icons.groups_outlined),
-            selectedIcon: Icon(Icons.groups_rounded),
-            label: 'Creators',
+            icon: Icon(Icons.campaign_outlined),
+            selectedIcon: Icon(Icons.campaign_rounded),
+            label: 'Creator Outreach',
           ),
           NavigationDestination(
             icon: Icon(Icons.person_outline_rounded),
