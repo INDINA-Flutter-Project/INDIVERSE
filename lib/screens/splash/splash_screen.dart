@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3600),
+      duration: const Duration(milliseconds: 3500),
     )..forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) _continueToNextScreen();
@@ -48,9 +48,8 @@ class _SplashScreenState extends State<SplashScreen>
       destination = const OnboardingScreen();
     }
 
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => destination));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (_) => destination));
   }
 
   @override
@@ -70,16 +69,6 @@ class _SplashScreenState extends State<SplashScreen>
         onTap: _continueToNextScreen,
         child: Stack(
           children: [
-            const DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment(0, -0.12),
-                  radius: 1.1,
-                  colors: [Color(0x2922D17E), Colors.transparent],
-                ),
-              ),
-              child: SizedBox.expand(),
-            ),
             if (!reduceMotion)
               AnimatedBuilder(
                 animation: _controller,
@@ -91,52 +80,61 @@ class _SplashScreenState extends State<SplashScreen>
                 animation: _controller,
                 builder: (context, _) {
                   final entrance = Curves.easeOutCubic.transform(
-                    (_controller.value / 0.24).clamp(0.0, 1.0),
+                    ((_controller.value - 0.023) / 0.257).clamp(0.0, 1.0),
                   );
                   final shine = Curves.easeInOutCubic.transform(
-                    ((_controller.value - 0.28) / 0.42).clamp(0.0, 1.0),
+                    ((_controller.value - 0.286) / 0.4).clamp(0.0, 1.0),
+                  );
+                  final exit = Curves.easeIn.transform(
+                    ((_controller.value - 0.829) / 0.171).clamp(0.0, 1.0),
                   );
 
                   return Opacity(
-                    opacity: entrance,
-                    child: Transform.scale(
-                      scale: 0.86 + (0.14 * entrance),
-                      child: Container(
-                        width: MediaQuery.sizeOf(
-                          context,
-                        ).width.clamp(190.0, 320.0),
-                        decoration: const BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x6622D17E),
-                              blurRadius: 48,
-                              spreadRadius: -8,
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Image.asset('assets/images/indiverse_wordmark.png'),
-                            if (!reduceMotion)
-                              ShaderMask(
-                                blendMode: BlendMode.srcATop,
-                                shaderCallback: (bounds) {
-                                  return LinearGradient(
-                                    begin: Alignment(-2.4 + shine * 4.8, -1),
-                                    end: Alignment(-1.4 + shine * 4.8, 1),
-                                    colors: const [
-                                      Colors.transparent,
-                                      Colors.white,
-                                      Colors.transparent,
-                                    ],
-                                  ).createShader(bounds);
-                                },
-                                child: Image.asset(
-                                  'assets/images/indiverse_wordmark.png',
-                                ),
+                    opacity: entrance * (1 - exit),
+                    child: Transform.translate(
+                      offset: Offset(0, 20 * (1 - entrance)),
+                      child: Transform.scale(
+                        scale: 0.88 + (0.12 * entrance),
+                        child: Container(
+                          width: math.min(
+                            MediaQuery.sizeOf(context).width * 0.62,
+                            200,
+                          ),
+                          decoration: const BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0x6622D17E),
+                                blurRadius: 48,
+                                spreadRadius: -8,
                               ),
-                          ],
+                            ],
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/indiverse_wordmark.png',
+                              ),
+                              if (!reduceMotion)
+                                ShaderMask(
+                                  blendMode: BlendMode.srcATop,
+                                  shaderCallback: (bounds) {
+                                    return LinearGradient(
+                                      begin: Alignment(-2.4 + shine * 4.8, -1),
+                                      end: Alignment(-1.4 + shine * 4.8, 1),
+                                      colors: const [
+                                        Colors.transparent,
+                                        Colors.white,
+                                        Colors.transparent,
+                                      ],
+                                    ).createShader(bounds);
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/indiverse_wordmark.png',
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -23,23 +23,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   static const _pages = [
     _OnboardingPage(
-      title: 'Find your next favorite game',
-      body:
-          'Browse indie games from Saudi studios - from early builds to full release.',
+      title: 'Find your next\nfavorite game',
+      body: 'Browse indie games from Saudi studios — from early builds to full release.',
       primary: _green,
       secondary: _silver,
     ),
     _OnboardingPage(
-      title: 'Every build tells a story',
-      body:
-          'Developers share progress, milestones, and devlogs as their games take shape.',
+      title: 'Every build\ntells a story',
+      body: 'Developers share progress, milestones, and devlogs as their games take shape.',
       primary: _silver,
       secondary: _green,
     ),
     _OnboardingPage(
-      title: 'Bridge to your audience',
-      body:
-          'Get matched with streamers and creators who bring your game to players.',
+      title: 'Bridge to\nyour audience',
+      body: 'Get matched with streamers and creators who bring your game to players.',
       primary: _green,
       secondary: _silver,
     ),
@@ -148,6 +145,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     onPageChanged: (value) => setState(() => _index = value),
                     itemBuilder: (context, index) {
                       return _PageContent(
+                        index: index,
                         page: _pages[index],
                         isActive: index == _index,
                         animation: reduceMotion
@@ -210,11 +208,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
 class _PageContent extends StatelessWidget {
   const _PageContent({
+    required this.index,
     required this.page,
     required this.isActive,
     required this.animation,
   });
 
+  final int index;
   final _OnboardingPage page;
   final bool isActive;
   final Animation<double> animation;
@@ -234,11 +234,11 @@ class _PageContent extends StatelessWidget {
 
               return Transform.translate(
                 offset: Offset(0, floatOffset),
-                child: _Emblem(page: page, angle: angle),
+                child: _Scene(index: index, progress: animation.value),
               );
             },
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 18),
           AnimatedOpacity(
             opacity: isActive ? 1 : 0.45,
             duration: const Duration(milliseconds: 260),
@@ -263,11 +263,42 @@ class _PageContent extends StatelessWidget {
   }
 }
 
-class _ShineText extends StatelessWidget {
+class _ShineText extends StatefulWidget {
   const _ShineText({required this.text, required this.active});
 
   final String text;
   final bool active;
+
+  @override
+  State<_ShineText> createState() => _ShineTextState();
+}
+
+class _ShineTextState extends State<_ShineText>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+      value: widget.active ? 0 : 1,
+    );
+    if (widget.active) _controller.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ShineText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.active && !oldWidget.active) _controller.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -278,92 +309,290 @@ class _ShineText extends StatelessWidget {
       fontWeight: FontWeight.w600,
     );
 
-    if (!active || MediaQuery.disableAnimationsOf(context)) {
-      return Text(text, textAlign: TextAlign.center, style: baseStyle);
+    if (!widget.active || MediaQuery.disableAnimationsOf(context)) {
+      return Text(widget.text, textAlign: TextAlign.center, style: baseStyle);
     }
 
-    return ShaderMask(
-      blendMode: BlendMode.srcIn,
-      shaderCallback: (bounds) => const LinearGradient(
-        begin: Alignment(-1.0, -0.5),
-        end: Alignment(1.0, 0.5),
-        colors: [
-          _OnboardingScreenState._ink,
-          Colors.white,
-          _OnboardingScreenState._ink,
-        ],
-      ).createShader(bounds),
-      child: Text(text, textAlign: TextAlign.center, style: baseStyle),
+    final lines = widget.text.split('\n');
+    final total = widget.text.replaceAll('\n', '').length;
+    var character = 0;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final line in lines)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final glyph in line.characters)
+                Builder(
+                  builder: (context) {
+                    final position = character++;
+                    return AnimatedBuilder(
+                      animation: _controller,
+                      child: Text(glyph, style: baseStyle),
+                      builder: (context, child) {
+                        final start = (position * .55 / math.max(total, 1))
+                            .clamp(0.0, .55);
+                        final value = Curves.easeOutCubic.transform(
+                          ((_controller.value - start) / .42).clamp(0.0, 1.0),
+                        );
+                        return Opacity(
+                          opacity: value,
+                          child: Transform.translate(
+                            offset: Offset(0, 8 * (1 - value)),
+                            child: child,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+            ],
+          ),
+      ],
     );
   }
 }
 
-class _Emblem extends StatelessWidget {
-  const _Emblem({required this.page, required this.angle});
+class _Scene extends StatelessWidget {
+  const _Scene({required this.index, required this.progress});
 
-  final _OnboardingPage page;
-  final double angle;
+  final int index;
+  final double progress;
 
   @override
-  Widget build(BuildContext context) {
-    const size = 148.0;
-    final first = Offset(math.cos(angle) * 74, math.sin(angle) * 74);
-    final second = Offset(
-      math.cos(-angle * 0.74 + 2.1) * 62,
-      math.sin(-angle * 0.74 + 2.1) * 62,
-    );
-    final third = Offset(
-      math.cos(angle + math.pi / 2) * 50,
-      math.sin(angle + math.pi / 2) * 50,
-    );
+  Widget build(BuildContext context) => SizedBox(
+    width: 200,
+    height: 160,
+    child: CustomPaint(
+      painter: _ScenePainter(index: index, progress: progress),
+    ),
+  );
+}
 
-    return SizedBox(
-      width: 210,
-      height: 210,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  page.primary.withValues(alpha: 0.20),
-                  page.primary.withValues(alpha: 0.07),
-                  Colors.transparent,
-                ],
-              ),
-              border: Border.all(color: page.primary.withValues(alpha: 0.30)),
-            ),
-          ),
-          Container(
-            width: size * 0.72,
-            height: size * 0.72,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.035),
-              shape: BoxShape.circle,
-              border: Border.all(color: page.primary.withValues(alpha: 0.18)),
-            ),
-          ),
-          Image.asset('assets/images/indiverse_mark.png', width: size * 0.5),
-          Transform.translate(
-            offset: first,
-            child: _OrbitDot(color: page.primary, size: 6),
-          ),
-          Transform.translate(
-            offset: second,
-            child: _OrbitDot(color: page.secondary, size: 5),
-          ),
-          Transform.translate(
-            offset: third,
-            child: _OrbitDot(color: page.primary, size: 3),
-          ),
-        ],
+class _ScenePainter extends CustomPainter {
+  const _ScenePainter({required this.index, required this.progress});
+
+  final int index;
+  final double progress;
+
+  static const green = Color(0xFF1ED87A);
+  static const teal = Color(0xFF0ECBAD);
+  static const silver = Color(0xFFC8D8D4);
+  static const panel = Color(0xFF0D1F18);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = Offset(size.width / 2, size.height * .51);
+    canvas.drawCircle(
+      c,
+      72,
+      Paint()
+        ..shader = const RadialGradient(
+          colors: [Color(0x3822D17E), Colors.transparent],
+        ).createShader(Rect.fromCircle(center: c, radius: 72)),
+    );
+    if (index == 0) _controller(canvas, c);
+    if (index == 1) _timeline(canvas, c);
+    if (index == 2) _network(canvas, c);
+  }
+
+  void _controller(Canvas canvas, Offset c) {
+    final float = math.sin(progress * math.pi * 2) * 3;
+    canvas.save();
+    canvas.translate(0, float);
+    final body = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: c, width: 96, height: 56),
+      const Radius.circular(28),
+    );
+    canvas.drawRRect(body, Paint()..color = panel);
+    canvas.drawRRect(
+      body,
+      Paint()
+        ..color = green.withValues(alpha: .7)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+    final p = Paint()..color = green.withValues(alpha: .8);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: c + const Offset(-28, 10),
+          width: 6,
+          height: 16,
+        ),
+        const Radius.circular(3),
       ),
+      p,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: c + const Offset(-28, 10),
+          width: 16,
+          height: 6,
+        ),
+        const Radius.circular(3),
+      ),
+      p,
+    );
+    final buttonPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
+    for (final entry in const [
+      (Offset(32, 4), teal),
+      (Offset(40, 12), green),
+      (Offset(24, 12), silver),
+    ]) {
+      buttonPaint.color = entry.$2;
+      canvas.drawCircle(c + entry.$1, 4, buttonPaint);
+    }
+    canvas.restore();
+    for (var i = 0; i < 4; i++) {
+      final a = progress * math.pi * 2 + i * math.pi / 2;
+      final star = c + Offset(math.cos(a) * 68, math.sin(a) * 34);
+      _star(canvas, star, i.isEven ? 4 : 3, i.isEven ? green : teal);
+    }
+  }
+
+  void _timeline(Canvas canvas, Offset c) {
+    final line = Paint()
+      ..color = green.withValues(alpha: .35)
+      ..strokeWidth = 1.5;
+    canvas.drawLine(c + const Offset(-64, 0), c + const Offset(64, 0), line);
+    const xs = [-54.0, -16.0, 22.0, 58.0];
+    const labels = ['Concept', 'Alpha', 'Beta', 'Launch'];
+    for (var i = 0; i < xs.length; i++) {
+      final done = i < 2;
+      final node = c + Offset(xs[i], 0);
+      canvas.drawCircle(node, 9, Paint()..color = done ? green : panel);
+      canvas.drawCircle(
+        node,
+        9,
+        Paint()
+          ..color = (done ? green : silver).withValues(alpha: done ? 1 : .5)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5,
+      );
+      final card = RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: node - const Offset(0, 28),
+          width: 36,
+          height: 20,
+        ),
+        const Radius.circular(5),
+      );
+      canvas.drawRRect(card, Paint()..color = panel);
+      canvas.drawRRect(
+        card,
+        Paint()
+          ..color = (done ? green : silver).withValues(alpha: done ? .7 : .3)
+          ..style = PaintingStyle.stroke,
+      );
+      _text(
+        canvas,
+        labels[i],
+        node - const Offset(0, 28),
+        done ? green : silver.withValues(alpha: .5),
+        7,
+      );
+      if (done) {
+        canvas.drawPath(
+          Path()
+            ..moveTo(node.dx - 4, node.dy)
+            ..lineTo(node.dx - 1, node.dy + 3)
+            ..lineTo(node.dx + 5, node.dy - 4),
+          Paint()
+            ..color = Colors.black
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2
+            ..strokeCap = StrokeCap.round,
+        );
+      }
+    }
+  }
+
+  void _network(Canvas canvas, Offset c) {
+    final nodes = <(Offset, String)>[
+      (c + const Offset(0, -10), 'Dev'),
+      (c + const Offset(-48, -36), 'Creator A'),
+      (c + const Offset(50, -36), 'Creator B'),
+      (c + const Offset(-60, 22), 'Streamer'),
+      (c + const Offset(58, 22), 'Creator C'),
+    ];
+    for (var i = 1; i < nodes.length; i++) {
+      canvas.drawLine(
+        nodes[0].$1,
+        nodes[i].$1,
+        Paint()
+          ..color = green.withValues(alpha: .3)
+          ..strokeWidth = 1,
+      );
+      final signal = Offset.lerp(
+        nodes[0].$1,
+        nodes[i].$1,
+        (progress * (1.1 + i * .13)) % 1,
+      )!;
+      canvas.drawCircle(signal, 2.5, Paint()..color = teal);
+    }
+    for (var i = 0; i < nodes.length; i++) {
+      final radius = i == 0 ? 16.0 : 11.0;
+      canvas.drawCircle(nodes[i].$1, radius, Paint()..color = panel);
+      canvas.drawCircle(
+        nodes[i].$1,
+        radius,
+        Paint()
+          ..color = i == 0 ? green : teal
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = i == 0 ? 2 : 1.2,
+      );
+      _text(
+        canvas,
+        nodes[i].$2,
+        nodes[i].$1,
+        const Color(0xFFF0F5F3),
+        i == 0 ? 6.5 : 5.5,
+      );
+    }
+  }
+
+  void _star(Canvas canvas, Offset c, double r, Color color) {
+    final path = Path();
+    for (var i = 0; i < 8; i++) {
+      final rr = i.isEven ? r : r * .4;
+      final a = -math.pi / 2 + i * math.pi / 4;
+      final p = c + Offset(math.cos(a) * rr, math.sin(a) * rr);
+      i == 0 ? path.moveTo(p.dx, p.dy) : path.lineTo(p.dx, p.dy);
+    }
+    canvas.drawPath(
+      path..close(),
+      Paint()..color = color.withValues(alpha: .8),
     );
   }
+
+  void _text(
+    Canvas canvas,
+    String value,
+    Offset center,
+    Color color,
+    double size,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: value,
+        style: TextStyle(color: color, fontSize: size),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    painter.paint(
+      canvas,
+      center - Offset(painter.width / 2, painter.height / 2),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _ScenePainter oldDelegate) =>
+      oldDelegate.index != index || oldDelegate.progress != progress;
 }
 
 class _GetStartedButton extends StatelessWidget {
@@ -463,26 +692,6 @@ class _BackgroundParticles extends StatelessWidget {
             screenSize: size,
           ),
       ],
-    );
-  }
-}
-
-class _OrbitDot extends StatelessWidget {
-  const _OrbitDot({required this.color, required this.size});
-
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: color, blurRadius: 10)],
-      ),
     );
   }
 }
