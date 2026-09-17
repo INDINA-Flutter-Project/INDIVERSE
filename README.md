@@ -76,7 +76,6 @@ progress sharing, and creator matching. The particle field reacts to swipe
 velocity in real time: particles drift and glow brighter the faster you drag.
 
 <p align="center">
-  <img src="docs/screenshots/splash.png" alt="INDIVERSE animated splash" width="180">
   &nbsp;&nbsp;
   <img src="docs/screenshots/onboarding-discover.png" alt="Onboarding: find your next favorite game" width="180">
   &nbsp;&nbsp;
