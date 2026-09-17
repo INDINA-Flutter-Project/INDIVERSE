@@ -76,33 +76,33 @@ progress sharing, and creator matching. The particle field reacts to swipe
 velocity in real time: particles drift and glow brighter the faster you drag.
 
 <p align="center">
-  <img src="docs/screenshots/splash.png" alt="INDIVERSE animated splash" width="200">
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="docs/screenshots/onboarding-discover.png" alt="Onboarding: find your next favorite game" width="200">
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="docs/screenshots/onboarding-connect.png" alt="Onboarding: bridge to your audience" width="200">
+  <img src="docs/screenshots/splash.png" alt="INDIVERSE animated splash" width="180">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/onboarding-discover.png" alt="Onboarding: find your next favorite game" width="180">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/onboarding-showcase.png" alt="Onboarding: every build tells a story" width="180">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/onboarding-connect.png" alt="Onboarding: bridge to your audience" width="180">
 </p>
 
-<p align="center"><sub>Animated splash &nbsp;•&nbsp; Discover indie games &nbsp;•&nbsp; Bridge to your audience</sub></p>
+<p align="center"><sub>Animated splash &nbsp;•&nbsp; Discover indie games &nbsp;•&nbsp; Every build tells a story &nbsp;•&nbsp; Bridge to your audience</sub></p>
 
 ### 2. One app, two roles
 
 After onboarding, a single role-selection screen splits the experience:
 **Continue as User** for players, **Continue as Developer** for studios.
-Each leads to its own sign-in/sign-up flow, with copy and fields tailored to
-that role, and from there its own four-tab shell.
+Each leads to its own sign-up flow, with copy and fields tailored to that
+role, and from there its own four-tab shell.
 
 <p align="center">
   <img src="docs/screenshots/role-selection.png" alt="INDIVERSE role selection screen" width="190">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/auth-user-login.png" alt="User login" width="190">
   &nbsp;&nbsp;
   <img src="docs/screenshots/auth-user-signup.png" alt="User sign up" width="190">
   &nbsp;&nbsp;
   <img src="docs/screenshots/auth-developer-signup.png" alt="Developer sign up" width="190">
 </p>
 
-<p align="center"><sub>Choose a role &nbsp;•&nbsp; User login &nbsp;•&nbsp; User sign up &nbsp;•&nbsp; Developer sign up</sub></p>
+<p align="center"><sub>Choose a role &nbsp;•&nbsp; User sign up &nbsp;•&nbsp; Developer sign up</sub></p>
 
 ### 3. Player tabs — Home · Explore · Wishlist · Profile
 
