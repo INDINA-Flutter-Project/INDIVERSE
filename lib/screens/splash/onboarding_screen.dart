@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/text_styles.dart';
+import '../../painters/onboarding_palette.dart';
 import '../../painters/scene_connect_painter.dart';
 import '../../painters/scene_discover_painter.dart';
 import '../../painters/scene_showcase_painter.dart';
 import '../../widgets/particle_canvas.dart';
 import '../authentication_screens/login_selection_screen.dart';
-
-const _green = Color(0xFF1ED87A);
-const _ink = Color(0xFFF0F5F3);
-const _muted = Color(0xFF6B7F7A);
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -23,22 +21,24 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   static const _pages = <_PageData>[
     _PageData(
       title: 'Find your next\nfavorite game',
-      body: 'Browse indie games from Saudi studios — from early builds to full release.',
+      body:
+          'Browse indie games from Saudi studios — from early builds to full release.',
     ),
     _PageData(
       title: 'Every build\ntells a story',
-      body: 'Developers share progress, milestones, and devlogs as their games take shape.',
+      body:
+          'Developers share progress, milestones, and devlogs as their games take shape.',
     ),
     _PageData(
       title: 'Bridge to\nyour audience',
-      body: 'Get matched with streamers and creators who bring your game to players.',
+      body:
+          'Get matched with streamers and creators who bring your game to players.',
     ),
   ];
 
   late final PageController _pageController;
   late final AnimationController _sceneController;
   late final AnimationController _revealController;
-  late final AnimationController _logoController;
   int _currentPage = 0;
   double _dragOffset = 0;
 
@@ -53,10 +53,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     _revealController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    )..forward();
-    _logoController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
     )..forward();
   }
 
@@ -85,7 +81,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     );
   }
 
-  void _finish() {
+  Future<void> _finish() async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool('onboarding_seen_v2', true);
+    if (!mounted) return;
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 500),
@@ -110,7 +109,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       ..dispose();
     _sceneController.dispose();
     _revealController.dispose();
-    _logoController.dispose();
     super.dispose();
   }
 
@@ -120,7 +118,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: kBg,
       body: SafeArea(
         child: Stack(
           fit: StackFit.expand,
@@ -146,7 +144,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                               child: Text(
                                 'Skip',
                                 style: AppTextStyles.interface.copyWith(
-                                  color: _muted,
+                                  color: kMuted,
                                   fontSize: 13,
                                   letterSpacing: .52,
                                 ),
@@ -202,7 +200,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                 height: 6,
                                 decoration: BoxDecoration(
                                   color: active
-                                      ? _green
+                                      ? kGreen
                                       : const Color(0x2EFFFFFF),
                                   borderRadius: BorderRadius.circular(3),
                                 ),
@@ -268,7 +266,7 @@ class _OnboardingPage extends StatelessWidget {
             child: AnimatedBuilder(
               animation: sceneAnimation,
               builder: (context, child) => CustomPaint(
-                size: const Size(200, 160),
+                size: const Size(260, 210),
                 painter: switch (index) {
                   0 => SceneDiscoverPainter(sceneAnimation.value),
                   1 => SceneShowcasePainter(sceneAnimation.value),
@@ -277,7 +275,7 @@ class _OnboardingPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 28),
           _StaggeredTitle(
             title: data.title,
             active: active,
@@ -332,6 +330,7 @@ class _StaggeredTitle extends StatelessWidget {
   }
 
   Widget _letter(String character, int index) {
+    // 28ms stagger per character.
     final startMs = index * 28;
     final value = !active
         ? 0.0
@@ -345,8 +344,8 @@ class _StaggeredTitle extends StatelessWidget {
         child: Text(
           character,
           style: AppTextStyles.onboardingTitle.copyWith(
-            color: _ink,
-            fontSize: 24,
+            color: kInk,
+            fontSize: 26,
             height: 1.3,
             fontWeight: FontWeight.w700,
           ),
@@ -372,6 +371,7 @@ class _RevealedBody extends StatelessWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
+        // Body fades in 420ms after the page becomes active.
         final value = !active
             ? 0.0
             : Curves.easeOutExpo.transform(
@@ -391,8 +391,8 @@ class _RevealedBody extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: AppTextStyles.onboardingDetails.copyWith(
-            color: _muted,
-            fontSize: 13.5,
+            color: kMuted,
+            fontSize: 15,
             height: 1.6,
           ),
         ),
@@ -416,7 +416,7 @@ class _NextButton extends StatelessWidget {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onPressed,
-          child: const Icon(Icons.chevron_right_rounded, color: _ink, size: 20),
+          child: const Icon(Icons.chevron_right_rounded, color: kInk, size: 20),
         ),
       ),
     );
@@ -435,7 +435,7 @@ class _StartButton extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [_green, Color(0xFF0DA85E)],
+          colors: [kGreen, Color(0xFF0DA85E)],
         ),
         borderRadius: BorderRadius.circular(999),
         boxShadow: const [

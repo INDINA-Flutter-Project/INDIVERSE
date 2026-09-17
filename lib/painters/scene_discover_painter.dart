@@ -2,136 +2,105 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-const _green = Color(0xFF1ED87A);
-const _teal = Color(0xFF0ECBAD);
-const _silver = Color(0xFFC8D8D4);
-const _muted = Color(0xFF6B7F7A);
-const _card = Color(0xFF0D1F18);
+import 'onboarding_palette.dart';
 
+const _viewBox = Rect.fromLTWH(0, 0, 200, 160);
+
+/// Page 1: a floating game controller, orbited by stars and sparkles.
+/// `progress` is a 0..1 sawtooth from a 12s-repeating [AnimationController],
+/// matching the CSS scene's 12s loop; individual motifs derive their own
+/// period by scaling that cycle (e.g. a 4s float is `progress * 12 / 4`).
 class SceneDiscoverPainter extends CustomPainter {
   const SceneDiscoverPainter(this.progress);
 
   final double progress;
 
+  double _cycles(double periodSeconds) => progress * 12 / periodSeconds;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height * .5125);
-    _glow(canvas, center, 72, 54, _green, .22);
+    withViewBox(canvas, size, _viewBox, (canvas) {
+      const center = Offset(100, 82);
+      final glowRect = Rect.fromCenter(center: center, width: 144, height: 108);
+      canvas.drawOval(
+        glowRect,
+        Paint()
+          ..shader = RadialGradient(
+            colors: [kGreen.withValues(alpha: .22), kGreen.withValues(alpha: 0)],
+          ).createShader(glowRect)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+      );
 
-    final floatY = -3.5 + math.sin(progress * math.pi * 2) * 3.5;
-    canvas.save();
-    canvas.translate(0, floatY);
+      final floatY = math.sin(_cycles(4) * math.pi * 2) * 7;
+      canvas.save();
+      canvas.translate(0, floatY);
+      _controller(canvas);
+      canvas.restore();
+
+      _orbitStar(canvas, center, 68, 9, kGreen, .7, reverse: false);
+      _orbitCircle(canvas, center, 58, 6, kTeal, .8);
+      _orbitStarScaled(canvas, center, 11);
+
+      _sparkle(canvas, const Offset(48, 54), 2, 0, 2);
+      _sparkle(canvas, const Offset(156, 60), 1.5, .4, 2.6);
+      _sparkle(canvas, const Offset(102, 38), 1.5, .8, 1.8);
+    });
+  }
+
+  void _controller(Canvas canvas) {
     final body = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: center, width: 96, height: 56),
+      const Rect.fromLTWH(52, 62, 96, 56),
       const Radius.circular(28),
     );
-    canvas.drawRRect(body, Paint()..color = _card);
+    canvas.drawRRect(body, Paint()..color = kCard);
     canvas.drawRRect(
       body,
       Paint()
-        ..color = _green.withValues(alpha: .7)
+        ..color = kGreen.withValues(alpha: .7)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
 
-    final dpad = Paint()..color = _green.withValues(alpha: .8);
+    final dpad = Paint()..color = kGreen.withValues(alpha: .8);
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromLTWH(center.dx - 32, center.dy + 4, 6, 16),
+        const Rect.fromLTWH(68, 86, 6, 16),
         const Radius.circular(3),
       ),
       dpad,
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromLTWH(center.dx - 37, center.dy + 9, 16, 6),
+        const Rect.fromLTWH(63, 91, 16, 6),
         const Radius.circular(3),
       ),
       dpad,
     );
-    _ring(canvas, center + const Offset(32, 4), 4, _teal, 1.5);
-    _ring(canvas, center + const Offset(40, 12), 4, _green, 1.5);
-    _ring(canvas, center + const Offset(24, 12), 4, _silver, 1.5);
-    _ring(
-      canvas,
-      center + const Offset(32, 20),
-      4,
-      _teal.withValues(alpha: .5),
-      .8,
-    );
+
+    _ring(canvas, const Offset(132, 86), 4, kTeal, 1.5, 1);
+    _ring(canvas, const Offset(140, 94), 4, kGreen, 1.5, 1);
+    _ring(canvas, const Offset(124, 94), 4, kSilver, 1.5, 1);
+    _ring(canvas, const Offset(132, 102), 4, kTeal, .8, .5);
+
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: center + const Offset(0, 8),
-          width: 6,
-          height: 16,
-        ),
+        const Rect.fromLTWH(97, 82, 6, 16),
         const Radius.circular(3),
       ),
-      Paint()..color = _muted.withValues(alpha: .4),
+      Paint()..color = kMuted.withValues(alpha: .4),
     );
-    for (final dx in [-28.0, 28.0]) {
-      final grip = Rect.fromCenter(
-        center: center + Offset(dx, 30),
-        width: 28,
-        height: 14,
-      );
-      canvas.drawOval(grip, Paint()..color = _card);
+
+    for (final dx in [72.0, 128.0]) {
+      final grip = Rect.fromCenter(center: Offset(dx, 112), width: 28, height: 14);
+      canvas.drawOval(grip, Paint()..color = kCard);
       canvas.drawOval(
         grip,
         Paint()
-          ..color = _green.withValues(alpha: .4)
-          ..style = PaintingStyle.stroke,
+          ..color = kGreen.withValues(alpha: .4)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1,
       );
     }
-    canvas.restore();
-
-    _orbitStar(canvas, center, 68, 0, 9, 4, _green, .7);
-    _orbitStar(canvas, center, 58, math.pi / 2, -6, 3.5, _teal, .8);
-    _orbitStar(canvas, center, 68, math.pi, 11, 3, _green, .5);
-    _sparkle(canvas, const Offset(48, 54), 2, 0);
-    _sparkle(canvas, const Offset(156, 60), 1.5, .35);
-    _sparkle(canvas, const Offset(102, 38), 1.5, .7);
-  }
-
-  void _orbitStar(
-    Canvas canvas,
-    Offset center,
-    double radius,
-    double start,
-    double seconds,
-    double size,
-    Color color,
-    double opacity,
-  ) {
-    final angle = start + progress * math.pi * 2 * (12 / seconds);
-    final point =
-        center +
-        Offset(math.cos(angle) * radius, math.sin(angle) * radius * .55);
-    _star(canvas, point, size, color.withValues(alpha: opacity));
-  }
-
-  void _sparkle(Canvas canvas, Offset point, double radius, double phase) {
-    final pulse =
-        .2 + .7 * ((math.sin((progress + phase) * math.pi * 2) + 1) / 2);
-    canvas.drawCircle(
-      point,
-      radius * (.7 + pulse * .6),
-      Paint()..color = _green.withValues(alpha: pulse),
-    );
-  }
-
-  void _star(Canvas canvas, Offset center, double radius, Color color) {
-    final path = Path();
-    for (var i = 0; i < 8; i++) {
-      final r = i.isEven ? radius : radius * .38;
-      final angle = -math.pi / 2 + i * math.pi / 4;
-      final point = center + Offset(math.cos(angle) * r, math.sin(angle) * r);
-      i == 0
-          ? path.moveTo(point.dx, point.dy)
-          : path.lineTo(point.dx, point.dy);
-    }
-    canvas.drawPath(path..close(), Paint()..color = color);
   }
 
   void _ring(
@@ -140,36 +109,76 @@ class SceneDiscoverPainter extends CustomPainter {
     double radius,
     Color color,
     double width,
+    double opacity,
   ) {
     canvas.drawCircle(
       center,
       radius,
       Paint()
-        ..color = color
+        ..color = color.withValues(alpha: opacity)
         ..style = PaintingStyle.stroke
         ..strokeWidth = width,
     );
   }
 
-  void _glow(
+  void _orbitStar(
     Canvas canvas,
     Offset center,
-    double rx,
-    double ry,
+    double radius,
+    double periodSeconds,
     Color color,
-    double alpha,
+    double opacity, {
+    required bool reverse,
+  }) {
+    final angle = _cycles(periodSeconds) * math.pi * 2 * (reverse ? -1 : 1);
+    final point = center + Offset(math.cos(angle), math.sin(angle)) * radius;
+    _star(canvas, point, 2.2, color.withValues(alpha: opacity));
+  }
+
+  void _orbitCircle(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    double periodSeconds,
+    Color color,
+    double opacity,
   ) {
-    final rect = Rect.fromCenter(center: center, width: rx * 2, height: ry * 2);
-    canvas.drawOval(
-      rect,
-      Paint()
-        ..shader = RadialGradient(
-          colors: [
-            color.withValues(alpha: alpha),
-            color.withValues(alpha: 0),
-          ],
-        ).createShader(rect),
+    final angle = -_cycles(periodSeconds) * math.pi * 2;
+    final point = center + Offset(math.cos(angle), math.sin(angle) * .3 - 1) * radius;
+    canvas.drawCircle(point, 3.5, Paint()..color = color.withValues(alpha: opacity));
+  }
+
+  void _orbitStarScaled(Canvas canvas, Offset center, double periodSeconds) {
+    final angle = _cycles(periodSeconds) * math.pi * 2;
+    final point = center + Offset(math.cos(angle), math.sin(angle) * .55) * 68;
+    _star(canvas, point, 1.4, kGreen.withValues(alpha: .5));
+  }
+
+  void _sparkle(
+    Canvas canvas,
+    Offset point,
+    double radius,
+    double phaseSeconds,
+    double periodSeconds,
+  ) {
+    final t = (_cycles(periodSeconds) + phaseSeconds / periodSeconds) % 1;
+    final pulse = .2 + .7 * ((math.sin(t * math.pi * 2) + 1) / 2);
+    canvas.drawCircle(
+      point,
+      radius * (.7 + pulse * .6),
+      Paint()..color = kGreen.withValues(alpha: pulse),
     );
+  }
+
+  void _star(Canvas canvas, Offset center, double radius, Color color) {
+    final path = Path();
+    for (var i = 0; i < 8; i++) {
+      final r = i.isEven ? radius : radius * .38;
+      final angle = -math.pi / 2 + i * math.pi / 4;
+      final point = center + Offset(math.cos(angle), math.sin(angle)) * r;
+      i == 0 ? path.moveTo(point.dx, point.dy) : path.lineTo(point.dx, point.dy);
+    }
+    canvas.drawPath(path..close(), Paint()..color = color);
   }
 
   @override

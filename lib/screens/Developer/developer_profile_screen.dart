@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
+import '../../core/widget/confirm_dialog.dart';
 import '../../service/auth_service.dart';
 import '../authentication_screens/login_selection_screen.dart';
 
@@ -9,18 +11,18 @@ class DeveloperProfileScreen extends StatelessWidget {
   const DeveloperProfileScreen({super.key});
 
   Future<void> _signOut(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign out?'),
-        content: const Text('You can sign back in anytime.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Sign out')),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmLabel: 'Confirm',
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
+    // Reset the onboarding flag so a fresh cold launch after this sign-out
+    // shows onboarding again, as if the app were new. Within this same
+    // session, though, sign-out drops straight to role selection below.
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool('onboarding_seen_v2', false);
     await AuthService().signOut();
     if (!context.mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
