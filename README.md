@@ -89,28 +89,79 @@ velocity in real time: particles drift and glow brighter the faster you drag.
 
 After onboarding, a single role-selection screen splits the experience:
 **Continue as User** for players, **Continue as Developer** for studios.
-Each leads to its own sign-in/sign-up flow and, from there, its own
-four-tab shell.
+Each leads to its own sign-in/sign-up flow, with copy and fields tailored to
+that role, and from there its own four-tab shell.
 
 <p align="center">
-  <img src="docs/screenshots/role-selection.png" alt="INDIVERSE role selection screen" width="200">
+  <img src="docs/screenshots/role-selection.png" alt="INDIVERSE role selection screen" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/auth-user-login.png" alt="User login" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/auth-user-signup.png" alt="User sign up" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/auth-developer-signup.png" alt="Developer sign up" width="190">
 </p>
 
-<p align="center"><sub>Choose Player or Developer</sub></p>
+<p align="center"><sub>Choose a role &nbsp;•&nbsp; User login &nbsp;•&nbsp; User sign up &nbsp;•&nbsp; Developer sign up</sub></p>
 
 ### 3. Player tabs — Home · Explore · Wishlist · Profile
 
 Home surfaces a featured game, an upcoming-events carousel pulled from every
-developer's scheduled events, and genre-matched picks. Explore is the full
-catalogue with filtering. Wishlist tracks saved games per account. Profile
-holds editable discovery preferences and sign-out.
+developer's scheduled events, and a "For you" list matched to saved genre
+preferences. Explore is the full catalogue with search and genre filter
+chips. Wishlist tracks saved games per account, with a clear empty state
+until you save your first one. Profile holds editable discovery preferences
+and sign-out.
 
-### 4. Developer tabs — Home · Playtesters · Creator Outreach · Profile
+<p align="center">
+  <img src="docs/screenshots/player-home.png" alt="Player Home tab" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/player-explore.png" alt="Player Explore tab" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/player-wishlist.png" alt="Player Wishlist tab, empty state" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/player-profile.png" alt="Player Profile tab" width="190">
+</p>
 
-Home lists the developer's own games with quick stats and an add/edit flow
-that includes scheduling events. Playtesters shows everyone who registered
-interest in any of the developer's games. Creator Outreach is where campaigns
-are created and incoming creator requests are accepted or declined.
+<p align="center"><sub>Home &nbsp;•&nbsp; Explore &nbsp;•&nbsp; Wishlist (empty state) &nbsp;•&nbsp; Profile</sub></p>
+
+### 4. A real game, in full
+
+Every game detail page shows its own cover art, tags, and description, then
+a "Game activity" panel with scheduled events (or a friendly "No activity
+yet.") and a one-tap **Apply** to register playtest interest. Where a
+developer has linked one, a **Steam** button opens the real store page
+in-app — the catalogue points at genuinely published titles, not placeholder
+data.
+
+<p align="center">
+  <img src="docs/screenshots/game-detail.png" alt="Game detail page with activity and playtest apply" width="220">
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/screenshots/game-detail-steam-link.png" alt="In-app Steam store page for the same game" width="220">
+</p>
+
+<p align="center"><sub>Game detail, activity & playtest &nbsp;•&nbsp; The linked Steam page, opened in-app</sub></p>
+
+### 5. Developer tabs — Home · Playtesters · Creator Outreach · Profile
+
+Home welcomes the studio by name and summarizes games published and
+upcoming events, with a clear path to publish a first game. Playtesters
+lists everyone who registered interest in any of the developer's games.
+Creator Outreach is where campaigns get created and incoming creator
+requests are accepted or declined. Profile shows games/events/saved-creator
+stats alongside profile editing and sign-out.
+
+<p align="center">
+  <img src="docs/screenshots/developer-home.png" alt="Developer Home tab" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/developer-playtesters.png" alt="Developer Playtesters tab, empty state" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/developer-creator-outreach.png" alt="Developer Creator Outreach tab" width="190">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/developer-profile.png" alt="Developer Profile tab" width="190">
+</p>
+
+<p align="center"><sub>Home &nbsp;•&nbsp; Playtesters (empty state) &nbsp;•&nbsp; Creator Outreach &nbsp;•&nbsp; Profile</sub></p>
 
 ## 🎨 Design System
 
