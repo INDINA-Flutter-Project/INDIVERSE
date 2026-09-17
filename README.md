@@ -118,20 +118,28 @@ INDIVERSE uses a near-black, **Signal Green** palette — dark enough to let
 game art and screenshots be the color, with a single saturated green reserved
 for actions and state.
 
-| Token | Hex | Purpose |
-|---|---|---|
-| Background | `#000000` | App background |
-| Surface / Surface Raised | `#090F0D` / `#101917` | Cards, sheets, raised panels |
-| Signal Green (primary) | `#22D17E` | Primary actions, active states |
-| Primary Deep | `#0E8F57` | Gradient partner for primary |
-| Text Primary / Secondary | `#F3F5F4` / `#8A9490` | Body copy hierarchy |
-| Border | `#1E2A26` | Hairlines and dividers |
-| Warning / Error | `#F1B85B` / `#FF6B6B` | Status colors |
+| | Token | Hex | Purpose |
+|---|---|---|---|
+| <img src="docs/colors/background.png" width="20" height="20"> | Background | `#000000` | App background |
+| <img src="docs/colors/surface.png" width="20" height="20"> | Surface | `#090F0D` | Cards, sheets, raised panels |
+| <img src="docs/colors/surface-raised.png" width="20" height="20"> | Surface Raised | `#101917` | Raised panels, elevated sheets |
+| <img src="docs/colors/signal-green.png" width="20" height="20"> | Signal Green (primary) | `#22D17E` | Primary actions, active states |
+| <img src="docs/colors/primary-deep.png" width="20" height="20"> | Primary Deep | `#0E8F57` | Gradient partner for primary |
+| <img src="docs/colors/text-primary.png" width="20" height="20"> | Text Primary | `#F3F5F4` | Headlines, body copy |
+| <img src="docs/colors/text-secondary.png" width="20" height="20"> | Text Secondary | `#8A9490` | Supporting/muted copy |
+| <img src="docs/colors/border.png" width="20" height="20"> | Border | `#1E2A26` | Hairlines and dividers |
+| <img src="docs/colors/warning.png" width="20" height="20"> | Warning | `#F1B85B` | Status colors |
+| <img src="docs/colors/error.png" width="20" height="20"> | Error | `#FF6B6B` | Status colors |
 
-The splash/onboarding flow uses its own closely-related accent pair
-(`#1ED87A` green, `#0ECBAD` teal) to match the brand mark exactly, kept
-separate from the app-wide theme on purpose — see
+The splash/onboarding flow uses its own closely-related accent pair to
+match the brand mark exactly, kept separate from the app-wide theme on
+purpose — see
 [`lib/painters/onboarding_palette.dart`](lib/painters/onboarding_palette.dart).
+
+| | Token | Hex |
+|---|---|---|
+| <img src="docs/colors/onboarding-green.png" width="20" height="20"> | Onboarding Green | `#1ED87A` |
+| <img src="docs/colors/onboarding-teal.png" width="20" height="20"> | Onboarding Teal | `#0ECBAD` |
 
 Three typefaces, one job each: **Michroma** for titles, **Tomorrow** for
 supporting detail copy, **Sora** for buttons, inputs, and general UI —
