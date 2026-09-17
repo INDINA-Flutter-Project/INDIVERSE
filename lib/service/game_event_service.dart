@@ -14,7 +14,8 @@ class GameEventService {
         .from(_table)
         .select()
         .eq('game_id', gameId)
-        .order('event_date');
+        .order('event_date')
+        .order('event_time');
 
     return rows.map(GameEvent.fromJson).toList(growable: false);
   }

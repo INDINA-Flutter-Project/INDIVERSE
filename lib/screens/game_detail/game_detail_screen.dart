@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/constants/app_colors.dart';
 import '../../models/game.dart';
+import '../../models/game_event.dart';
+import '../../service/game_event_service.dart';
 import '../../service/playtest_interest_service.dart';
 import '../../service/url_launcher_service.dart';
 
@@ -27,10 +29,76 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
   _InterestState _interestState = _InterestState.loading;
   bool _playtestBusy = false;
 
+  List<GameEvent> _events = const [];
+  bool _eventsLoading = true;
+  String? _eventsError;
+
   @override
   void initState() {
     super.initState();
     _loadInterestState();
+    _loadEvents();
+  }
+
+  /// Loads independently of Playtesting/the rest of the screen — a failure
+  /// here must never block or crash Game Details, only the "Game activity"
+  /// events rows show an inline error.
+  Future<void> _loadEvents() async {
+    setState(() {
+      _eventsLoading = true;
+      _eventsError = null;
+    });
+    try {
+      final events = await GameEventService().getEventsForGame(
+        widget.game.id,
+      );
+      if (!mounted) return;
+      setState(() => _events = events);
+    } catch (e, st) {
+      debugPrint('getEventsForGame (player) failed: $e\n$st');
+      if (!mounted) return;
+      setState(() => _eventsError = 'Could not load activity.');
+    } finally {
+      if (mounted) setState(() => _eventsLoading = false);
+    }
+  }
+
+  List<Widget> _buildActivityChildren() {
+    if (_eventsLoading) {
+      return const [
+        _ActivityStatusRow(
+          icon: Icons.event_outlined,
+          text: 'Loading activity…',
+          trailing: _Spinner(),
+        ),
+      ];
+    }
+    if (_eventsError != null) {
+      return [
+        _ActivityStatusRow(
+          icon: Icons.event_busy_outlined,
+          text: _eventsError!,
+          trailing: const _RetryPill(),
+          onTap: _loadEvents,
+        ),
+      ];
+    }
+    if (_events.isEmpty) {
+      return const [
+        _ActivityStatusRow(
+          icon: Icons.event_outlined,
+          text: 'No activity yet.',
+        ),
+      ];
+    }
+    final rows = <Widget>[];
+    for (var i = 0; i < _events.length; i++) {
+      if (i > 0) {
+        rows.add(const Divider(color: AppColors.border, height: 24));
+      }
+      rows.add(_EventRow(event: _events[i]));
+    }
+    return rows;
   }
 
   Future<void> _loadInterestState() async {
@@ -236,32 +304,7 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                   ),
                   child: Column(
                     children: [
-                      const ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: CircleAvatar(
-                          backgroundColor: AppColors.primaryContainer,
-                          child: Icon(
-                            Icons.celebration_rounded,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        title: Text(
-                          'Playable demo showcase',
-                          style: TextStyle(fontFamily: 'Michroma'),
-                        ),
-                        subtitle: Text(
-                          '18 September · Riyadh',
-                          style: TextStyle(fontFamily: 'Tomorrow'),
-                        ),
-                        trailing: Text(
-                          'UPCOMING',
-                          style: TextStyle(
-                            fontFamily: 'Tomorrow',
-                            color: AppColors.primary,
-                            fontSize: 9,
-                          ),
-                        ),
-                      ),
+                      ..._buildActivityChildren(),
                       if (isUpcoming) ...[
                         const Divider(color: AppColors.border, height: 24),
                         switch (_interestState) {
@@ -373,6 +416,84 @@ class _ImageOverlayButton extends StatelessWidget {
               ],
             ),
             child: Icon(icon, color: color, size: 23),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A single real `game_events` row shown to players inside "Game activity".
+/// Read-only — no onTap, no edit/delete affordance. Plain [ListTile] is safe
+/// here (no onTap, no tileColor) exactly like the static row it replaced.
+class _EventRow extends StatelessWidget {
+  const _EventRow({required this.event});
+
+  final GameEvent event;
+
+  @override
+  Widget build(BuildContext context) {
+    final location = event.location;
+    final subtitle = (location != null && location.isNotEmpty)
+        ? '${event.scheduleLabel} · $location'
+        : event.scheduleLabel;
+
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const CircleAvatar(
+        backgroundColor: AppColors.primaryContainer,
+        child: Icon(Icons.celebration_rounded, color: AppColors.primary),
+      ),
+      title: Text(event.title, style: const TextStyle(fontFamily: 'Michroma')),
+      subtitle: Text(subtitle, style: const TextStyle(fontFamily: 'Tomorrow')),
+    );
+  }
+}
+
+/// A compact loading/error/empty row for the events section of "Game
+/// activity". Uses the same Material → InkWell technique as
+/// [_PlaytestingRow] so an optional tap target (e.g. Retry) is always safe.
+class _ActivityStatusRow extends StatelessWidget {
+  const _ActivityStatusRow({
+    required this.icon,
+    required this.text,
+    this.trailing,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final String text;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: AppColors.primaryContainer,
+                child: Icon(icon, color: AppColors.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontFamily: 'Tomorrow',
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+              if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+            ],
           ),
         ),
       ),
