@@ -94,7 +94,7 @@ Each leads to its own sign-up flow, with copy and fields tailored to that
 role, and from there its own four-tab shell.
 
 <p align="center">
-  <img src="docs/screenshots/role-selection.png" alt="INDIVERSE role selection screen" width="190">
+  <img width="190"  alt="Simulator Screenshot - iPhone 16 Pro Max - 2026-09-18 at 02 01 07" src="https://github.com/user-attachments/assets/82a9ed52-1b7d-4a04-9051-22dea317af83" />
   &nbsp;&nbsp;
   <img src="docs/screenshots/auth-user-signup.png" alt="User sign up" width="190">
   &nbsp;&nbsp;
