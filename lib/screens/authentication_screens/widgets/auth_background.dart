@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../widgets/particle_canvas.dart';
+
+/// A cooler, slightly green-tinted near-black used behind the auth
+/// flow instead of flat pure black, so the background reads as
+/// designed rather than an empty screen.
+const _kAuthBg = Color(0xFF060B09);
 
 class AuthDecoratedBackground extends StatelessWidget {
   const AuthDecoratedBackground({super.key, required this.child});
@@ -11,7 +17,8 @@ class AuthDecoratedBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Positioned.fill(child: ColoredBox(color: AppColors.background)),
+        const Positioned.fill(child: ColoredBox(color: _kAuthBg)),
+        const Positioned.fill(child: ParticleCanvas()),
         const Positioned.fill(child: CustomPaint(painter: _AuthGlowPainter())),
         Positioned.fill(child: child),
       ],
@@ -351,7 +358,7 @@ class _AuthGlowPainter extends CustomPainter {
 
     final dimOverlay = Paint()
       ..shader = const LinearGradient(
-        colors: [Colors.transparent, Colors.black],
+        colors: [Colors.transparent, _kAuthBg],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ).createShader(Offset.zero & size);

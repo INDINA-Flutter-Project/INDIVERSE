@@ -26,3 +26,5 @@ class IndiverseApp extends StatelessWidget {
     home: const SplashScreen(),
   );
 }
+
+//then i want to work on the github repo https://github.com/INDINA-Flutter-Project/INDIVERSE

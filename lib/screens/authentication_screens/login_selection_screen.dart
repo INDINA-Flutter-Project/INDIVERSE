@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -70,7 +72,7 @@ class _LoginSelectionScreenState extends State<LoginSelectionScreen>
                     ),
                   ),
                 ),
-                const SizedBox(height: 48),
+                const Spacer(),
                 Opacity(
                   opacity: brand,
                   child: const _FeatureRow(),
@@ -132,8 +134,16 @@ class _LoginSelectionScreenState extends State<LoginSelectionScreen>
   );
 }
 
-class _FeatureRow extends StatelessWidget {
+class _FeatureRow extends StatefulWidget {
   const _FeatureRow();
+
+  @override
+  State<_FeatureRow> createState() => _FeatureRowState();
+}
+
+class _FeatureRowState extends State<_FeatureRow>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse;
 
   static const _items = [
     (Icons.explore_outlined, 'Discover'),
@@ -142,37 +152,85 @@ class _FeatureRow extends StatelessWidget {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Slow, gentle breathing loop; staggered per icon below so the
+    // three circles glow in a soft, non-distracting wave rather than
+    // pulsing in lockstep.
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2800),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          for (final item in _items)
-            Column(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: .05),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: .1),
-                    ),
+          for (var i = 0; i < _items.length; i++)
+            AnimatedBuilder(
+              animation: _pulse,
+              builder: (context, child) {
+                final t = (_pulse.value + i * .27) % 1.0;
+                final wave =
+                    (math.sin(t * 2 * math.pi) + 1) / 2;
+                final eased = Curves.easeInOut.transform(wave);
+                final scale = 1.0 + eased * .09;
+                final glowAlpha = .14 + eased * .26;
+                final item = _items[i];
+                return Transform.scale(
+                  scale: scale,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withValues(alpha: .05),
+                          border: Border.all(
+                            color: AppColors.primary.withValues(
+                              alpha: glowAlpha,
+                            ),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(
+                                alpha: eased * .32,
+                              ),
+                              blurRadius: 14,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          item.$1,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        item.$2,
+                        style: AppTextStyles.interface.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
-                  child: Icon(item.$1, color: AppColors.primary, size: 20),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  item.$2,
-                  style: AppTextStyles.interface.copyWith(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+                );
+              },
             ),
         ],
       ),
