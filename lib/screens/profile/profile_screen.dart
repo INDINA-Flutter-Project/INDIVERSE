@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/text_styles.dart';
+import '../../core/widget/confirm_dialog.dart';
 import '../../core/widget/empty_state.dart';
 import '../../models/user_preferences.dart';
 import '../../service/auth_service.dart';
@@ -58,18 +60,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _signOut() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Sign out?'),
-        content: const Text('You can sign back in anytime.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Sign out')),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmLabel: 'Confirm',
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
+    // Reset the onboarding flag so a fresh cold launch after this sign-out
+    // shows onboarding again, as if the app were new. Within this same
+    // session, though, sign-out drops straight to role selection below —
+    // onboarding is a first-run moment, not something to replay on every
+    // logout while the app stays open.
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool('onboarding_seen_v2', false);
     await AuthService().signOut();
     if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(

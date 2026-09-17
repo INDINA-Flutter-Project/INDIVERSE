@@ -10,6 +10,14 @@ import '../authentication_screens/login_selection_screen.dart';
 import '../player/player_shell.dart';
 import 'onboarding_screen.dart';
 
+const _kTotalMs = 4100;
+const _kExitStartMs = 3400;
+const _kExitDurationMs = 700;
+const _kEntranceDelayMs = 80;
+const _kEntranceDurationMs = 900;
+const _kShimmerDelayMs = 980;
+const _kShimmerDurationMs = 1400;
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -19,7 +27,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  static const _exitStart = 3400 / 4100;
+  static const _exitStart = _kExitStartMs / _kTotalMs;
   late final AnimationController _controller;
   bool _leaving = false;
 
@@ -28,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 4100),
+      duration: const Duration(milliseconds: _kTotalMs),
     )..forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) _openNext();
@@ -41,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (_controller.value < _exitStart) _controller.value = _exitStart;
     _controller.animateTo(
       1,
-      duration: const Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: _kExitDurationMs),
       curve: Curves.easeInOutCubic,
     );
   }
@@ -51,14 +59,15 @@ class _SplashScreenState extends State<SplashScreen>
     final session = Supabase.instance.client.auth.currentSession;
     final Widget destination;
     if (session != null) {
-      destination = Supabase.instance.client.auth.currentUser?.userMetadata?['role'] ==
+      destination =
+          Supabase.instance.client.auth.currentUser?.userMetadata?['role'] ==
               'developer'
           ? const DeveloperShell()
           : const PlayerShell();
     } else {
       final preferences = await SharedPreferences.getInstance();
-      final onboardingSeen = preferences.getBool('onboarding_seen') ?? false;
-      if (!onboardingSeen) await preferences.setBool('onboarding_seen', true);
+      const onboardingKey = 'onboarding_seen_v2';
+      final onboardingSeen = preferences.getBool(onboardingKey) ?? false;
       destination = onboardingSeen
           ? const LoginSelectionScreen()
           : const OnboardingScreen();
@@ -67,8 +76,7 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 600),
-        pageBuilder: (_, animation, secondaryAnimation) =>
-            destination,
+        pageBuilder: (_, animation, secondaryAnimation) => destination,
         transitionsBuilder: (_, animation, secondaryAnimation, child) {
           final curve = CurvedAnimation(
             parent: animation,
@@ -110,28 +118,25 @@ class _SplashScreenState extends State<SplashScreen>
         child: Stack(
           fit: StackFit.expand,
           children: [
-            if (!reduceMotion) const ParticleCanvas(),
+            if (!reduceMotion) const ParticleCanvas(dragOffset: 0),
             Center(
               child: AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
                   final entrance = Curves.easeOutExpo.transform(
-                    ((_controller.value - 80 / 4100) / (900 / 4100)).clamp(
-                      0.0,
-                      1.0,
-                    ),
+                    ((_controller.value - _kEntranceDelayMs / _kTotalMs) /
+                            (_kEntranceDurationMs / _kTotalMs))
+                        .clamp(0.0, 1.0),
                   );
                   final shimmer = Curves.easeOutExpo.transform(
-                    ((_controller.value - 820 / 4100) / (2400 / 4100)).clamp(
-                      0.0,
-                      1.0,
-                    ),
+                    ((_controller.value - _kShimmerDelayMs / _kTotalMs) /
+                            (_kShimmerDurationMs / _kTotalMs))
+                        .clamp(0.0, 1.0),
                   );
                   final exit = Curves.easeInOutCubic.transform(
-                    ((_controller.value - _exitStart) / (700 / 4100)).clamp(
-                      0.0,
-                      1.0,
-                    ),
+                    ((_controller.value - _exitStart) /
+                            (_kExitDurationMs / _kTotalMs))
+                        .clamp(0.0, 1.0),
                   );
                   return Opacity(
                     opacity: reduceMotion ? 1 : entrance * (1 - exit),
