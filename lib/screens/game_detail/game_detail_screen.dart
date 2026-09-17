@@ -81,29 +81,23 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
     }
   }
 
-  Future<void> _toggleInterest() async {
-    if (_playtestBusy) return;
+  /// One-time submission: only callable from [_InterestState.notInterested].
+  /// This UI never cancels or toggles an existing request — once submitted,
+  /// the interest row is permanent for the player.
+  Future<void> _submitInterest() async {
+    if (_playtestBusy || _interestState != _InterestState.notInterested) {
+      return;
+    }
     final userId = Supabase.instance.client.auth.currentUser?.id;
     if (userId == null) return;
 
     setState(() => _playtestBusy = true);
     try {
-      if (_interestState == _InterestState.interested) {
-        await PlaytestInterestService().removeInterest(
-          gameId: widget.game.id,
-          playerId: userId,
-        );
-        if (!mounted) return;
-        setState(() => _interestState = _InterestState.notInterested);
-      } else {
-        await PlaytestInterestService().registerInterest(
-          gameId: widget.game.id,
-        );
-        if (!mounted) return;
-        setState(() => _interestState = _InterestState.interested);
-      }
+      await PlaytestInterestService().registerInterest(gameId: widget.game.id);
+      if (!mounted) return;
+      setState(() => _interestState = _InterestState.interested);
     } catch (e, st) {
-      debugPrint('playtest interest toggle failed: $e\n$st');
+      debugPrint('playtest interest submission failed: $e\n$st');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -271,41 +265,32 @@ class _GameDetailsScreenState extends State<GameDetailsScreen> {
                       if (isUpcoming) ...[
                         const Divider(color: AppColors.border, height: 24),
                         switch (_interestState) {
-                          _InterestState.loading => const _ActivityRow(
-                            title: 'Playtesting',
-                            subtitle: 'Checking your interest…',
+                          _InterestState.loading => const _PlaytestingRow(
+                            subtitle: 'Checking request…',
                             trailing: _Spinner(),
                           ),
-                          _InterestState.error => _ActivityRow(
-                            title: 'Playtesting',
-                            subtitle: 'Could not check interest · Tap to retry',
-                            trailing: const Icon(
-                              Icons.refresh_rounded,
-                              color: AppColors.textSecondary,
-                            ),
+                          _InterestState.error => _PlaytestingRow(
+                            subtitle: 'Could not check request',
+                            trailing: const _RetryPill(),
                             onTap: _loadInterestState,
                           ),
-                          _InterestState.notInterested => _ActivityRow(
-                            title: 'Playtesting',
-                            subtitle: 'Interested in testing this game',
+                          _InterestState.notInterested => _PlaytestingRow(
+                            subtitle: _playtestBusy
+                                ? 'Submitting request…'
+                                : 'Apply to playtest this game',
                             trailing: _playtestBusy
                                 ? const _Spinner()
-                                : const Icon(
-                                    Icons.chevron_right_rounded,
-                                    color: AppColors.textSecondary,
-                                  ),
-                            onTap: _playtestBusy ? null : _toggleInterest,
+                                : const _ApplyPill(),
+                            onTap: _playtestBusy ? null : _submitInterest,
+                            emphasize: !_playtestBusy,
                           ),
-                          _InterestState.interested => _ActivityRow(
-                            title: 'Playtesting',
-                            subtitle: "You're interested in playtesting",
-                            trailing: _playtestBusy
-                                ? const _Spinner()
-                                : const Icon(
-                                    Icons.check_circle_rounded,
-                                    color: AppColors.primary,
-                                  ),
-                            onTap: _playtestBusy ? null : _toggleInterest,
+                          _InterestState.interested => const _PlaytestingRow(
+                            subtitle: 'Request submitted',
+                            trailing: Icon(
+                              Icons.check_circle_rounded,
+                              color: AppColors.primary,
+                            ),
+                            onTap: null,
                           ),
                         },
                       ],
@@ -395,31 +380,155 @@ class _ImageOverlayButton extends StatelessWidget {
   }
 }
 
-class _ActivityRow extends StatelessWidget {
-  const _ActivityRow({
-    required this.title,
+/// The Playtesting row inside "Game activity".
+///
+/// This intentionally does not use [ListTile]: ListTile paints its
+/// background/ink splashes on the nearest ancestor [Material], and this row
+/// lives inside a plain [Container] with an opaque background color (the
+/// "Game activity" card). Without its own [Material] ancestor sitting
+/// directly above it, that combination trips ListTile's
+/// "background color or ink splashes may be invisible" assertion. Using
+/// [Material] + [InkWell] directly gives this row its own ink surface and
+/// also lets [emphasize] render a distinct actionable look (green accent)
+/// for the not-submitted state, separate from ordinary informational rows.
+class _PlaytestingRow extends StatelessWidget {
+  const _PlaytestingRow({
     required this.subtitle,
     required this.trailing,
     this.onTap,
+    this.emphasize = false,
   });
 
-  final String title;
   final String subtitle;
   final Widget trailing;
   final VoidCallback? onTap;
+  final bool emphasize;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      onTap: onTap,
-      leading: const CircleAvatar(
-        backgroundColor: AppColors.primaryContainer,
-        child: Icon(Icons.emoji_people_outlined, color: AppColors.primary),
+    final fillColor = emphasize
+        ? AppColors.primary.withValues(alpha: 0.08)
+        : Colors.transparent;
+    final borderColor = emphasize
+        ? AppColors.primary.withValues(alpha: 0.4)
+        : Colors.transparent;
+
+    return Material(
+      color: fillColor,
+      borderRadius: BorderRadius.circular(14),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: borderColor),
+          ),
+          child: Row(
+            children: [
+              const CircleAvatar(
+                backgroundColor: AppColors.primaryContainer,
+                child: Icon(
+                  Icons.science_outlined,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Playtesting',
+                      style: TextStyle(fontFamily: 'Michroma'),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontFamily: 'Tomorrow',
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              trailing,
+            ],
+          ),
+        ),
       ),
-      title: Text(title, style: const TextStyle(fontFamily: 'Michroma')),
-      subtitle: Text(subtitle, style: const TextStyle(fontFamily: 'Tomorrow')),
-      trailing: trailing,
+    );
+  }
+}
+
+class _ApplyPill extends StatelessWidget {
+  const _ApplyPill();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.55)),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Apply',
+            style: TextStyle(
+              fontFamily: 'Tomorrow',
+              color: AppColors.primary,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Icon(Icons.chevron_right_rounded, color: AppColors.primary, size: 16),
+        ],
+      ),
+    );
+  }
+}
+
+class _RetryPill extends StatelessWidget {
+  const _RetryPill();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.textSecondary.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppColors.textSecondary.withValues(alpha: 0.4),
+        ),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.refresh_rounded,
+            color: AppColors.textSecondary,
+            size: 14,
+          ),
+          SizedBox(width: 4),
+          Text(
+            'Retry',
+            style: TextStyle(
+              fontFamily: 'Tomorrow',
+              color: AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
