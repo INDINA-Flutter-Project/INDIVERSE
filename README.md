@@ -151,13 +151,19 @@ requests are accepted or declined. Profile shows games/events/saved-creator
 stats alongside profile editing and sign-out.
 
 <p align="center">
-  <img src="docs/screenshots/developer-home.png" alt="Developer Home tab" width="190">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/developer-playtesters.png" alt="Developer Playtesters tab, empty state" width="190">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/developer-creator-outreach.png" alt="Developer Creator Outreach tab" width="190">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/developer-profile.png" alt="Developer Profile tab" width="190">
+  <img width="190" " alt="Screenshot_1789758073" src="https://github.com/user-attachments/assets/7e92e814-f7d3-4566-869f-8905caba4fc4" />
+ <img width="190"  alt="Screenshot_1789758552" src="https://github.com/user-attachments/assets/cb7e115f-ec2c-4c27-b85d-01dd7740acde" />
+<img width="190" alt="Screenshot_1789758015" src="https://github.com/user-attachments/assets/088f06b3-fa3b-4ee0-95b6-f13c7dc34999" />
+ <img width="190"  alt="Screenshot_1789758021" src="https://github.com/user-attachments/assets/dd570abb-5c53-4369-9fe0-1472f38443e6" />
+  <img width="190"  alt="Screenshot_1789758044" src="https://github.com/user-attachments/assets/bf21ef26-f73a-4720-92de-79e93855ffb4" />
+  <img width="190"  alt="Screenshot_1789758566" src="https://github.com/user-attachments/assets/c35c4362-60f2-49b0-baed-8ce03d8ac44d" />
+  <img width="190" alt="Screenshot_1789758788" src="https://github.com/user-attachments/assets/3d627042-fac9-4e61-8553-ba912cafcc28" />
+
+
+
+
+
+
 </p>
 
 <p align="center"><sub>Home &nbsp;•&nbsp; Playtesters (empty state) &nbsp;•&nbsp; Creator Outreach &nbsp;•&nbsp; Profile</sub></p>
