@@ -325,6 +325,6 @@ known exceptions).
 ---
 
 <p align="center">
-  Made by <strong>Turki Mohammed</strong> and <strong>Faisal Alanazi</strong>
+  Made by <strong>Turki Mohammed Turki</strong> and <strong>Faisal Alanazi</strong>
   for the Flutter Bootcamp Final Project.
 </p>
