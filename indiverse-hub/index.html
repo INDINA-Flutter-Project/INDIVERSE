@@ -23,6 +23,10 @@
   }
 
   *{box-sizing:border-box;}
+  html{
+    overflow-x:hidden;
+    max-width:100%;
+  }
   body{
     margin:0;
     background:var(--bg);
@@ -30,6 +34,7 @@
     font-family:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;
     padding-inline:20px;
     overflow-x:hidden;
+    max-width:100%;
   }
   img{max-width:100%;display:block;}
 
@@ -74,6 +79,8 @@
   #particles{
     position:absolute;
     inset:-40px -20px auto -20px;
+    width:calc(100% + 40px);
+    max-width:calc(100% + 40px);
     height:520px;
     z-index:0;
     pointer-events:none;
