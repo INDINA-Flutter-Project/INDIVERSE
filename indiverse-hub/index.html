@@ -242,6 +242,11 @@
   }
   .creator-card h3{font-size:16px;margin-bottom:3px;}
   .creator-card .role{font-size:12.5px;color:var(--text-faint);margin-bottom:16px;}
+  .link-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
   .li-btn{
     display:inline-flex;
     align-items:center;
@@ -436,8 +441,8 @@
   }
 </style>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="fonts.css" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="fonts.css"></noscript>
 
 
 </head>
@@ -516,13 +521,21 @@
         <div class="avatar">TT</div>
         <h3>Turki Mohammed Turki</h3>
         <div class="role">Co-Creator, INDIVERSE</div>
-        <a class="li-btn" href="https://www.linkedin.com/in/turki-turki-321b79378/?skipRedirect=true" target="_blank" rel="noopener">Connect on LinkedIn &rarr;</a>
+        <div class="link-row">
+          <a class="li-btn" href="https://www.linkedin.com/in/turki-turki-321b79378/?skipRedirect=true" target="_blank" rel="noopener">LinkedIn &rarr;</a>
+          <a class="li-btn" href="https://github.com/turki125" target="_blank" rel="noopener">GitHub &rarr;</a>
+          <a class="li-btn" href="Turki_Mohammed_Turki_CV.pdf" target="_blank" rel="noopener">CV &rarr;</a>
+        </div>
       </div>
       <div class="creator-card">
         <div class="avatar">FA</div>
         <h3>Faisal Al Anazi</h3>
         <div class="role">Co-Creator, INDIVERSE</div>
-        <a class="li-btn" href="https://www.linkedin.com/in/faisal-alanazi-5aa50b40b/" target="_blank" rel="noopener">Connect on LinkedIn &rarr;</a>
+        <div class="link-row">
+          <a class="li-btn" href="https://www.linkedin.com/in/faisal-alanazi-5aa50b40b/" target="_blank" rel="noopener">LinkedIn &rarr;</a>
+          <a class="li-btn" href="https://github.com/FaisalAlanazi-1" target="_blank" rel="noopener">GitHub &rarr;</a>
+          <a class="li-btn" href="Faisal_Al_Anazi_CV.pdf" target="_blank" rel="noopener">CV &rarr;</a>
+        </div>
       </div>
     </div>
   </section>
@@ -553,7 +566,7 @@
     <a class="bar-btn primary" href="poster.jpg" download="INDIVERSE_Poster.jpg">Download</a>
   </div>
   <div style="padding-block:24px 48px;">
-    <img src="poster.jpg" alt="INDIVERSE project poster" style="width:100%;height:auto;border-radius:14px;border:1px solid var(--border-soft);display:block;">
+    <img id="posterImg" data-src="poster.jpg" alt="INDIVERSE project poster" style="width:100%;height:auto;border-radius:14px;border:1px solid var(--border-soft);display:block;">
   </div>
 </div>
 
@@ -572,7 +585,9 @@
 
   // ---- poster overlay ----
   var poster = document.getElementById('posterView');
+  var posterImg = document.getElementById('posterImg');
   document.getElementById('openPoster').addEventListener('click', function(){
+    if(posterImg && !posterImg.src){ posterImg.src = posterImg.getAttribute('data-src'); }
     poster.hidden = false;
     document.body.style.overflow='hidden';
     poster.scrollTop = 0;
